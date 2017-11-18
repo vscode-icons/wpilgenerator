@@ -1,0 +1,38 @@
+{
+    "name": "wpilgenerator",
+    "displayName": "Wiki Page Icons List Generator",
+    "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
+    "version": "0.0.1",
+    "publisher": "vscode-icons",
+    "license": "MIT",
+    "author": {
+        "email": "jimikar@gmail.com",
+        "name": "Jimi (Dimitris) Charalampidis"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vscode-icons/wpilgenerator"
+    },
+    "bugs": {
+        "url": "https://github.com/vscode-icons/wpilgenerator/issues"
+    },
+    "main": "./out/src/",
+    "scripts": {
+        "precompile": "rimraf ./out",
+        "compile": "tsc",
+        "compile:w": "npm run compile -- -w",
+        "lint": "tslint --project tsconfig.json",
+        "prewpilgen": "npm run lint && npm run compile",
+        "wpilgen": "node ./out/src/wpilgenerator"
+    },
+    "dependencies": {
+        "nodegit": "0.18.3"
+    },
+    "devDependencies": {
+        "@types/node": "^8.0.47",
+        "@types/nodegit": "^0.18.5",
+        "rimraf": "^2.6.2",
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.1"
+    }
+}
