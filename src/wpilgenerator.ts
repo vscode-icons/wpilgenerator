@@ -1,5 +1,7 @@
+
 import { Logger } from './logger';
 import { Parser } from './parser';
+import { pathUnixJoin } from './utils';
 import { IResult } from './interfaces';
 import { GitClient } from './git-client';
 import { FilesListGenerator } from './filesListGenerator';
@@ -7,12 +9,13 @@ import { FoldersListGenerator } from './foldersListGenerator';
 
 async function main(args: string[]): Promise<void> {
 
+  const dirname = './../../../../';
+  const manifestFolder = 'out/src/icon-manifest/';
+  const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions'));
+  const folders = require(pathUnixJoin(dirname, manifestFolder, 'supportedFolders'));
   const logger = new Logger();
   const pargs = Parser.parse(args, logger);
   const gitClient = new GitClient(pargs, logger);
-
-  const files = require('./../../../../out/src/icon-manifest/supportedExtensions');
-  const folders = require('./../../../../out/src/icon-manifest/supportedFolders');
 
   try {
     // clone or open repo
