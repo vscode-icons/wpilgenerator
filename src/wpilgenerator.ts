@@ -9,6 +9,7 @@ import { FoldersListGenerator } from './foldersListGenerator';
 
 async function main(args: string[]): Promise<void> {
 
+  // This directory should point to the 'vscode-icons' root directory
   const dirname = './../../../../';
   const manifestFolder = 'out/src/icon-manifest/';
   const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions'));

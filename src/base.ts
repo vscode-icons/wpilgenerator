@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as http from 'http';
 import * as https from 'https';
 import * as models from './models';
@@ -163,7 +162,7 @@ export abstract class BaseGenerator {
       : __dirname;
     const filePath = utils.pathUnixJoin(dirname, this.wikiPageFilename);
     const filePathLog = this.pargs.output === 'repo'
-      ? filePath.replace(`${this.gitClient.dirname}${path.sep}`, '')
+      ? filePath.replace(`${this.gitClient.dirname}`, '')
       : filePath;
 
     this.logger.log(`Writing new wiki page to: ${filePathLog}`, this.logGroupId);
@@ -243,7 +242,7 @@ export abstract class BaseGenerator {
       if (this.pargs.output === 'repo') {
         try {
           const filePath = utils.pathUnixJoin(this.gitClient.wikiRepoFolder, this.wikiPageFilename);
-          this.logger.log(`Reading wiki page from: ${filePath.replace(`${this.gitClient.dirname}${path.sep}`, '')}`,
+          this.logger.log(`Reading wiki page from: ${filePath.replace(`${this.gitClient.dirname}`, '')}`,
             this.logGroupId);
           const str = fs.readFileSync(filePath).toString();
           return res(str);

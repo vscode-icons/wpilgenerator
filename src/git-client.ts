@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as git from 'nodegit';
 import { Logger } from './logger';
 import { pathUnixJoin } from './utils';
@@ -21,7 +20,7 @@ export class GitClient {
   constructor(private pargs: IParsedArgs, private logger: Logger) {
     this.codeRepoUrl = 'https://github.com/%account%/vscode-icons'.replace(/%account%/, this.pargs.account);
     this.wikiRepoUrl = `${this.codeRepoUrl}.wiki`;
-    this.dirname = pathUnixJoin(process.cwd(), '../../..');
+    this.dirname = pathUnixJoin(process.cwd(), './../../../../');
     this.codeRepoFolder = pathUnixJoin(this.dirname, this.pargs.account, 'vscode-icons');
     this.wikiRepoFolder = pathUnixJoin(this.dirname, this.pargs.account, 'vscode-icons.wiki');
     this.logGroupId = 'git';
@@ -98,7 +97,7 @@ export class GitClient {
   }
 
   private async cloneRepo(url: string, repoFolder: string): Promise<git.Repository> {
-    const message = `Cloning repo: '${url}' into '${repoFolder.replace(`${this.dirname}${path.sep}`, '')}'`;
+    const message = `Cloning repo: '${url}' into '${repoFolder.replace(`${this.dirname}`, '')}'`;
     const spinner: ISpinner = this.logger.spinnerLogStart(message, this.logGroupId);
     const clone = await git.Clone.clone(url, repoFolder);
     this.logger.spinnerLogStop(spinner, message.replace('Cloning', 'Cloned'), this.logGroupId);
