@@ -71,7 +71,7 @@ export abstract class BaseGenerator {
       if (!isFilename) {
         // extensions
         extension.extensions.forEach((ext: string, index: number) => {
-          text += `${ext}${(index === extension.extensions.length - 1 ? ' ' : ', ')}`;
+          text += `${this.normalize(ext)}${(index === extension.extensions.length - 1 ? ' ' : ', ')}`;
         });
       } else {
         // filenames
@@ -154,8 +154,15 @@ export abstract class BaseGenerator {
     return index === list.length - 1 ? '|\n' : '';
   }
 
+  private normalize(text: string): string {
+    const regex = /[_*]/g;
+    const match = text.match(regex);
+    if (!!!match) { return text; }
+    return text.replace(regex, `\\${match[0]}`);
+  }
+
   private tryWriteToFile(content: string): void {
-    if (!content) { return; }
+    if (!!!content) { return; }
 
     const dirname = this.pargs.output === 'repo'
       ? this.gitClient.wikiRepoFolder
@@ -181,6 +188,7 @@ export abstract class BaseGenerator {
     }
     return newWikiPage;
   }
+
   private getFilenames(extension: models.IFileExtension): string {
     let text = '';
 
