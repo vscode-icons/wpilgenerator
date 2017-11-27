@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+var logger = new (require("../out/src/logger")).Logger();
+var wpilgen = require("../out/src/wpilgenerator");
+
+if ((process.env.TRAVIS_SECURE_ENV_VARS !== "true") || (process.env.GH_TOKEN === "")) {
+  logger.log("Secure environment variable is not set");
+  process.exit();
+}
+if (process.env.TRAVIS_OS_NAME !== "linux") {
+  logger.log(`Running on '${process.env.TRAVIS_OS_NAME}' is not allowed`);
+  process.exit();
+}
+if (process.env.TRAVIS_NODE_VERSION !== "7.9.0") {
+  logger.log(`Running on node version '${process.env.TRAVIS_NODE_VERSION}' is not allowed`);
+  process.exit();
+}
+if (process.env.TRAVIS_PULL_REQUEST !== "false") {
+  logger.log("Running on Pull Request is not allowed");
+  process.exit();
+}
+if (process.env.TRAVIS_BRANCH !== "master") {
+  logger.log(`Running on branch '${process.env.TRAVIS_BRANCH}' is not allowed`);
+  process.exit();
+}
+if (process.env.TRAVIS_REPO_SLUG !== "vscode-icons/vscode-icons") {
+  logger.log(`Running on '${process.env.TRAVIS_REPO_SLUG}' is not allowed`);
+  process.exit();
+}
+if (process.argv.length === 2) {
+  process.argv.push("-o", "repo", "-t", process.env.GH_TOKEN);
+}
+wpilgen.main(process.argv);

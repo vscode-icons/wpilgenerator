@@ -17,13 +17,17 @@
         "url": "https://github.com/vscode-icons/wpilgenerator/issues"
     },
     "main": "./out/src/",
+    "bin": {
+        "wpilgen": "./bin/wpilgen"
+    },
     "scripts": {
+        "postinstall": "npm run compile",
         "precompile": "rimraf ./out",
         "compile": "tsc",
         "compile:w": "npm run compile -- -w",
         "lint": "tslint --project tsconfig.json",
         "prewpilgen": "npm run lint && npm run compile",
-        "wpilgen": "node ./out/src/wpilgenerator"
+        "wpilgen": "node ./bin/wpilgen"
     },
     "dependencies": {
         "nodegit": "0.18.3"

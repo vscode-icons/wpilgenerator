@@ -7,7 +7,7 @@ import { GitClient } from './git-client';
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
 
-async function main(args: string[]): Promise<void> {
+export async function main(args: string[]): Promise<void> {
 
   // This directory should point to the 'vscode-icons' root directory
   const dirname = './../../../../';
@@ -78,5 +78,3 @@ async function main(args: string[]): Promise<void> {
     logger.error(error.stack);
   }
 }
-
-main(process.argv);

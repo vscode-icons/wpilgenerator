@@ -1,0 +1,9 @@
+.vscode/**
+src/**
+.editorconfig
+.gitignore
+.npmignore
+package-lock.json
+tsconfig.json
+tslint.json
+yarn.lock
