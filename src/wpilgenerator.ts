@@ -1,15 +1,15 @@
 
 import { Logger } from './logger';
-import { Parser } from './parser';
+import { YargsParser } from './yargsParser';
 import { pathUnixJoin } from './utils';
 import { IResult } from './interfaces';
 import { GitClient } from './git-client';
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
 
-export async function main(args: string[]): Promise<void> {
+export async function main(): Promise<void> {
   const logger = new Logger();
-  const pargs = Parser.parse(args, logger);
+  const pargs = new YargsParser(logger).parse();
   const gitClient = new GitClient(pargs, logger);
 
   try {

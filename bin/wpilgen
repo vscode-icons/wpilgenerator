@@ -27,4 +27,4 @@ if (pargv.length === 2) {
   pargv.push("-o", "repo", "-t", penv.GH_TOKEN);
 }
 
-wpilgen.main(pargv);
+wpilgen.main();
