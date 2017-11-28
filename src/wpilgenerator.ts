@@ -8,17 +8,17 @@ import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
 
 export async function main(args: string[]): Promise<void> {
-
-  // This directory should point to the 'vscode-icons' root directory
-  const dirname = './../../../../';
-  const manifestFolder = 'out/src/icon-manifest/';
-  const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions'));
-  const folders = require(pathUnixJoin(dirname, manifestFolder, 'supportedFolders'));
   const logger = new Logger();
   const pargs = Parser.parse(args, logger);
   const gitClient = new GitClient(pargs, logger);
 
   try {
+    // This directory should point to the 'vscode-icons' root directory
+    const dirname = './../../../../';
+    const manifestFolder = 'out/src/icon-manifest/';
+    const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions'));
+    const folders = require(pathUnixJoin(dirname, manifestFolder, 'supportedFolders'));
+
     // clone or open repo
     await Promise.all([gitClient.getCodeRepository(), gitClient.getWikiRepository()]);
 

@@ -2,32 +2,29 @@
 
 var logger = new (require("../out/src/logger")).Logger();
 var wpilgen = require("../out/src/wpilgenerator");
+var pargv = process.argv;
+var penv = process.env;
+var checkPassed = true;
+var doCheck = function (condition, message) {
+  if (!checkPassed) {
+    return !checkPassed;
+  }
+  if (condition) {
+    logger.log(message);
+    checkPassed = !condition;
+    return;
+  }
+  checkPassed = condition;
+}
+if (pargv.length === 2) {
+  doCheck((penv.TRAVIS_SECURE_ENV_VARS !== "true") || (penv.GH_TOKEN === ""), "Secure environment variable is not set");
+  doCheck(penv.TRAVIS_OS_NAME !== "linux", `Running on '${penv.TRAVIS_OS_NAME}' is not allowed`);
+  doCheck(penv.TRAVIS_NODE_VERSION !== "7.9.0", `Running on node version '${penv.TRAVIS_NODE_VERSION}' is not allowed`);
+  doCheck(penv.TRAVIS_PULL_REQUEST !== "false", "Running on Pull Request is not allowed");
+  doCheck(penv.TRAVIS_BRANCH !== "master", `Running on branch '${penv.TRAVIS_BRANCH}' is not allowed`);
+  doCheck(penv.TRAVIS_REPO_SLUG !== "vscode-icons/vscode-icons", `Running on '${penv.TRAVIS_REPO_SLUG}' is not allowed`);
+  if (!checkPassed) { return; }
+  pargv.push("-o", "repo", "-t", penv.GH_TOKEN);
+}
 
-if ((process.env.TRAVIS_SECURE_ENV_VARS !== "true") || (process.env.GH_TOKEN === "")) {
-  logger.log("Secure environment variable is not set");
-  process.exit();
-}
-if (process.env.TRAVIS_OS_NAME !== "linux") {
-  logger.log(`Running on '${process.env.TRAVIS_OS_NAME}' is not allowed`);
-  process.exit();
-}
-if (process.env.TRAVIS_NODE_VERSION !== "7.9.0") {
-  logger.log(`Running on node version '${process.env.TRAVIS_NODE_VERSION}' is not allowed`);
-  process.exit();
-}
-if (process.env.TRAVIS_PULL_REQUEST !== "false") {
-  logger.log("Running on Pull Request is not allowed");
-  process.exit();
-}
-if (process.env.TRAVIS_BRANCH !== "master") {
-  logger.log(`Running on branch '${process.env.TRAVIS_BRANCH}' is not allowed`);
-  process.exit();
-}
-if (process.env.TRAVIS_REPO_SLUG !== "vscode-icons/vscode-icons") {
-  logger.log(`Running on '${process.env.TRAVIS_REPO_SLUG}' is not allowed`);
-  process.exit();
-}
-if (process.argv.length === 2) {
-  process.argv.push("-o", "repo", "-t", process.env.GH_TOKEN);
-}
-wpilgen.main(process.argv);
+wpilgen.main(pargv);
