@@ -16,13 +16,13 @@
     "bugs": {
         "url": "https://github.com/vscode-icons/wpilgenerator/issues"
     },
-    "main": "./out/src/",
+    "main": "./lib/wpilgenerator",
     "bin": {
         "wpilgen": "./bin/wpilgen"
     },
     "scripts": {
         "postinstall": "npm run compile",
-        "precompile": "rimraf ./out",
+        "precompile": "rimraf ./lib",
         "compile": "tsc",
         "compile:w": "npm run compile -- -w",
         "lint": "tslint --project tsconfig.json",

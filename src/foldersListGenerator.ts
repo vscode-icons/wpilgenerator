@@ -1,12 +1,12 @@
 import { Logger } from './logger';
 import { BaseGenerator } from './base';
 import { GitClient } from './git-client';
-import { IExtension } from './models';
+import { IExtension, IFolderCollection } from './models';
 import { IParsedArgs } from './interfaces';
 
 export class FoldersListGenerator extends BaseGenerator {
 
-  constructor(private folders: any, pargs: IParsedArgs, gitClient: GitClient, logger: Logger) {
+  constructor(private folders: IFolderCollection, pargs: IParsedArgs, gitClient: GitClient, logger: Logger) {
     super('ListOfFolders.md', 'supportedFolders.ts', pargs, gitClient, logger, 'folders');
   }
 
@@ -29,47 +29,47 @@ export class FoldersListGenerator extends BaseGenerator {
     let mdText = this.getHeaders(listHeaders);
 
     // Default Folder Dark Theme
-    mdText += this.getName(this.folders.extensions.default.folder);
-    mdText += this.getExtensions(this.folders.extensions.default.folder as IExtension);
-    mdText += this.getDarkThemeImages(this.folders.extensions.default.folder,
+    mdText += this.getName(this.folders.default.folder);
+    mdText += this.getExtensions(this.folders.default.folder as IExtension);
+    mdText += this.getDarkThemeImages(this.folders.default.folder,
       this.defaultPrefix, /*isFolder*/ true);
-    mdText += this.getLightThemeImages(this.folders.extensions.default.folder as IExtension,
+    mdText += this.getLightThemeImages(this.folders.default.folder as IExtension,
       this.defaultPrefix, /*isFolder*/ true);
     mdText += this.getLineEnd([], -1);
 
     // Default Folder Light Theme
-    if (this.folders.extensions.default.folder_light) {
-      mdText += this.getName(this.folders.extensions.default.folder_light);
-      mdText += this.getExtensions(this.folders.extensions.default.folder_light as IExtension);
-      mdText += this.getDarkThemeImages(this.folders.extensions.default.folder_light,
+    if (this.folders.default.folder_light) {
+      mdText += this.getName(this.folders.default.folder_light);
+      mdText += this.getExtensions(this.folders.default.folder_light as IExtension);
+      mdText += this.getDarkThemeImages(this.folders.default.folder_light,
         this.defaultPrefix, /*isFolder*/ true);
-      mdText += this.getLightThemeImages(this.folders.extensions.default.folder_light as IExtension,
+      mdText += this.getLightThemeImages(this.folders.default.folder_light as IExtension,
         this.defaultPrefix, /*isFolder*/ true, /*hasLightImage*/ true);
       mdText += this.getLineEnd([], -1);
     }
 
     // Default Root Folder Dark Theme
-    mdText += this.getName(this.folders.extensions.default.root_folder);
-    mdText += this.getExtensions(this.folders.extensions.default.root_folder as IExtension);
-    mdText += this.getDarkThemeImages(this.folders.extensions.default.root_folder,
+    mdText += this.getName(this.folders.default.root_folder);
+    mdText += this.getExtensions(this.folders.default.root_folder as IExtension);
+    mdText += this.getDarkThemeImages(this.folders.default.root_folder,
       this.defaultPrefix, /*isFolder*/ true);
-    mdText += this.getLightThemeImages(this.folders.extensions.default.root_folder as IExtension,
+    mdText += this.getLightThemeImages(this.folders.default.root_folder as IExtension,
       this.defaultPrefix, /*isFolder*/ true);
     mdText += this.getLineEnd([], -1);
 
     // Default Root Folder Light Theme
-    if (this.folders.extensions.default.root_folder_light) {
-      mdText += this.getName(this.folders.extensions.default.root_folder_light);
-      mdText += this.getExtensions(this.folders.extensions.default.root_folder_light as IExtension);
-      mdText += this.getDarkThemeImages(this.folders.extensions.default.root_folder_light,
+    if (this.folders.default.root_folder_light) {
+      mdText += this.getName(this.folders.default.root_folder_light);
+      mdText += this.getExtensions(this.folders.default.root_folder_light as IExtension);
+      mdText += this.getDarkThemeImages(this.folders.default.root_folder_light,
         this.defaultPrefix, /*isFolder*/ true);
-      mdText += this.getLightThemeImages(this.folders.extensions.default.root_folder_light as IExtension,
+      mdText += this.getLightThemeImages(this.folders.default.root_folder_light as IExtension,
         this.defaultPrefix, /*isFolder*/ true, /*hasLightImage*/ true);
       mdText += this.getLineEnd([], -1);
     }
 
     // Supported Folders
-    this.folders.extensions.supported
+    this.folders.supported
       .forEach(folder => {
         mdText += this.getName(folder);
         mdText += this.getExtensions(folder);

@@ -1,4 +1,4 @@
 node_modules
-out
+lib
 .DS_Store
 npm-debug.*

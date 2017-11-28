@@ -14,10 +14,11 @@ export async function main(): Promise<void> {
 
   try {
     // This directory should point to the 'vscode-icons' root directory
-    const dirname = './../../../../';
+    // TODO: Locate 'vscode-icons manifest folder'
+    const dirname = './../../../';
     const manifestFolder = 'out/src/icon-manifest/';
-    const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions'));
-    const folders = require(pathUnixJoin(dirname, manifestFolder, 'supportedFolders'));
+    const files = require(pathUnixJoin(dirname, manifestFolder, 'supportedExtensions')).extensions;
+    const folders = require(pathUnixJoin(dirname, manifestFolder, 'supportedFolders')).extensions;
 
     // clone or open repo
     await Promise.all([gitClient.getCodeRepository(), gitClient.getWikiRepository()]);

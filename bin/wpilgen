@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-var logger = new (require("../out/src/logger")).Logger();
-var wpilgen = require("../out/src/wpilgenerator");
+var logger = new (require("../lib/logger")).Logger();
+var wpilgen = require("../lib/wpilgenerator");
 var pargv = process.argv;
 var penv = process.env;
 var checkPassed = true;
