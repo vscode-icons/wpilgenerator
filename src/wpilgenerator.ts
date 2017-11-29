@@ -18,10 +18,10 @@ export async function main(): Promise<void> {
     const rootDir = findDirectorySync('vscode-icons');
 
     // Find files and folders path
-    const filesPath = findFileSync(new RegExp('src/.*/supportedExtensions.js', 'g'), rootDir);
-    const foldersPath = findFileSync(new RegExp('src/.*/supportedFolders.js', 'g'), rootDir);
-    const files = require(filesPath[0]).extensions;
-    const folders = require(foldersPath[0]).extensions;
+    const filesPath = findFileSync(new RegExp('src/.*/supportedExtensions.js', 'g'), rootDir)[0];
+    const foldersPath = findFileSync(new RegExp('src/.*/supportedFolders.js', 'g'), rootDir)[0];
+    const files = require(filesPath).extensions;
+    const folders = require(foldersPath).extensions;
 
     // clone or open repo
     await Promise.all([gitClient.getCodeRepository(), gitClient.getWikiRepository()]);

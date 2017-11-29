@@ -49,7 +49,7 @@ export class YargsParser {
 
   public parse(): IParsedArgs {
     if (y.argv.out === 'repo' && !!!y.argv.token) {
-      this.logger.error(`No token provided.`);
+      this.logger.error(`No token provided`);
       process.exit();
     }
 
