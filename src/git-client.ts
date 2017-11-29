@@ -3,6 +3,7 @@ import * as git from 'nodegit';
 import { Logger } from './logger';
 import { pathUnixJoin } from './utils';
 import { IParsedArgs, ISpinner } from './interfaces';
+import { clearInterval } from 'timers';
 
 export class GitClient {
 
@@ -46,12 +47,17 @@ export class GitClient {
 
     let hasChanged = false;
     const spinner: ISpinner = this.logger.spinnerLogStart(`Checking for changes to: '${filename}'`, this.logGroupId);
-    hasChanged = await this.checkForDiff(this.codeRepo, filename);
-    this.logger.spinnerLogStop(spinner,
-      `${hasChanged ? 'C' : 'No c'}hanges detected to: '${filename}'`,
-      this.logGroupId);
+    try {
+      hasChanged = await this.checkForDiff(this.codeRepo, filename);
+      this.logger.spinnerLogStop(spinner,
+        `${hasChanged ? 'C' : 'No c'}hanges detected to: '${filename}'`,
+        this.logGroupId);
 
-    return hasChanged;
+      return hasChanged;
+    } catch (e) {
+      clearInterval(spinner.timer);
+      throw e;
+    }
   }
 
   public async tryCommitToWikiRepo(filename: string, content: string): Promise<boolean> {
@@ -99,9 +105,15 @@ export class GitClient {
   private async cloneRepo(url: string, repoFolder: string): Promise<git.Repository> {
     const message = `Cloning repo: '${url}' into '${repoFolder.replace(`${this.dirname}`, '')}'`;
     const spinner: ISpinner = this.logger.spinnerLogStart(message, this.logGroupId);
-    const clone = await git.Clone.clone(url, repoFolder);
-    this.logger.spinnerLogStop(spinner, message.replace('Cloning', 'Cloned'), this.logGroupId);
-    return clone;
+    try {
+      const clone = await git.Clone.clone(url, repoFolder);
+      this.logger.spinnerLogStop(spinner, message.replace('Cloning', 'Cloned'), this.logGroupId);
+
+      return clone;
+    } catch (e) {
+      clearInterval(spinner.timer);
+      throw e;
+    }
   }
 
   private addRemote(repo: git.Repository, url: string): git.Remote {
@@ -111,31 +123,38 @@ export class GitClient {
   private async commit(repo: git.Repository, filename: string): Promise<boolean> {
     const spinner: ISpinner = this.logger.spinnerLogStart(`Creating commit`, this.logGroupId);
 
-    const index = await repo.refreshIndex();
-    // git add
-    await index.addByPath(filename);
+    try {
+      const index = await repo.refreshIndex();
 
-    if (!index.write()) {
-      throw new Error(`Failed writing repo index.`);
+      // git add
+      await index.addByPath(filename);
+
+      if (!index.write()) {
+        throw new Error(`Failed writing repo index.`);
+      }
+
+      const matches = filename.match(/files|folders/i);
+      const name = matches && matches[0];
+      if (!name) {
+        throw new Error('Can not determine list name');
+      }
+      const commitMessage = `:robot: Update list of ${name.toLowerCase()}`;
+      const time = +(Date.now() / 1000).toFixed(0); // unix UTC
+      const author = git.Signature.create('vscode-icons-bot', 'vscode-icons-bot@github.com', time, 0); // our own bot!!
+      const committer = author;
+      const oid = await index.writeTree();
+      const headId = await git.Reference.nameToId(repo, 'HEAD');
+
+      // git commit
+      await repo.createCommit('HEAD', author, committer, commitMessage, oid, [headId]);
+
+      this.logger.spinnerLogStop(spinner, `Commit created: ${headId.tostrS()}`, this.logGroupId);
+
+      return true;
+    } catch (e) {
+      clearInterval(spinner.timer);
+      throw e;
     }
-
-    const matches = filename.match(/files|folders/i);
-    const name = matches && matches[0];
-    if (!name) {
-      throw new Error('Can not determine list name');
-    }
-    const commitMessage = `:robot: Update list of ${name.toLowerCase()}`;
-    const time = +(Date.now() / 1000).toFixed(0); // unix UTC
-    const author = git.Signature.create('vscode-icons-bot', 'vscode-icons-bot@github.com', time, 0); // our own bot!!
-    const committer = author;
-    const oid = await index.writeTree();
-    const headId = await git.Reference.nameToId(repo, 'HEAD');
-    // git commit
-    await repo.createCommit('HEAD', author, committer, commitMessage, oid, [headId]);
-
-    this.logger.spinnerLogStop(spinner, `Commit created: ${headId.tostrS()}`, this.logGroupId);
-
-    return true;
   }
 
   private async push(remote: git.Remote, numOfCommit: number): Promise<number> {
@@ -152,9 +171,15 @@ export class GitClient {
       clearInterval(spinner.timer);
       throw new Error('Timeout on push action');
     }, 60000);
-    const result = await remote.push(['refs/heads/master:refs/heads/master'], options);
-    this.logger.spinnerLogStop(spinner, `Commit${suffix} pushed`, this.logGroupId);
-    clearTimeout(timer);
-    return result;
+
+    try {
+      const result = await remote.push(['refs/heads/master:refs/heads/master'], options);
+      this.logger.spinnerLogStop(spinner, `Commit${suffix} pushed`, this.logGroupId);
+      clearTimeout(timer);
+      return result;
+    } catch (e) {
+      clearInterval(spinner.timer);
+      throw e;
+    }
   }
 }

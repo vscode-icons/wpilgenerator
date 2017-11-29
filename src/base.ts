@@ -265,7 +265,10 @@ export abstract class BaseGenerator {
 
       const response = (resp: http.IncomingMessage): void => {
         const body = [];
-        resp.on('error', err => rej(err.stack))
+        resp.on('error', err => {
+          clearInterval(spinner.timer);
+          rej(err.stack);
+        })
           .on('data', chunk => body.push(chunk))
           .on('end', _ => {
             this.logger.spinnerLogStop(spinner, 'Wiki page received', this.logGroupId);
