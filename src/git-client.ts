@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as git from 'nodegit';
 import { Logger } from './logger';
-import { pathUnixJoin } from './utils';
+import { findDirectorySync, pathUnixJoin } from './utils';
 import { IParsedArgs, ISpinner } from './interfaces';
 import { clearInterval } from 'timers';
 
@@ -21,7 +21,7 @@ export class GitClient {
   constructor(private pargs: IParsedArgs, private logger: Logger) {
     this.codeRepoUrl = 'https://github.com/%account%/vscode-icons'.replace(/%account%/, this.pargs.account);
     this.wikiRepoUrl = `${this.codeRepoUrl}.wiki`;
-    this.dirname = pathUnixJoin(process.cwd(), './../../../../');
+    this.dirname = pathUnixJoin(findDirectorySync('vscode-icons'), './../../');
     this.codeRepoFolder = pathUnixJoin(this.dirname, this.pargs.account, 'vscode-icons');
     this.wikiRepoFolder = pathUnixJoin(this.dirname, this.pargs.account, 'vscode-icons.wiki');
     this.logGroupId = 'git';
