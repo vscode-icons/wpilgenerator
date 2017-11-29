@@ -43,11 +43,12 @@ export class YargsParser {
       .alias('help', 'h')
       .version()
       .alias('version', 'V')
-      .strict()
-      ;
+      .strict();
   }
 
   public parse(): IParsedArgs {
+    y.parse(process.argv.splice(2));
+
     if (y.argv.out === 'repo' && !!!y.argv.token) {
       this.logger.error(`No token provided`);
       process.exit();

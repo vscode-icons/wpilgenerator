@@ -24,7 +24,6 @@ if (pargv.length === 2) {
   doCheck(penv.TRAVIS_BRANCH !== "master", `Running on branch '${penv.TRAVIS_BRANCH}' is not allowed`);
   doCheck(penv.TRAVIS_REPO_SLUG !== "vscode-icons/vscode-icons", `Running on '${penv.TRAVIS_REPO_SLUG}' is not allowed`);
   if (!checkPassed) { return; }
-  pargv.push("-o", "repo", "-t", penv.GH_TOKEN);
+  pargv.push("all", "-o", "repo", "-t", penv.GH_TOKEN);
 }
-
 wpilgen.main();
