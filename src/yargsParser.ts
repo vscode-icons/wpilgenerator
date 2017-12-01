@@ -43,26 +43,29 @@ export class YargsParser {
       .alias('help', 'h')
       .version()
       .alias('version', 'V')
+      .check((argv: y.Arguments) => this.validate(argv))
       .strict();
   }
 
   public parse(): IParsedArgs {
-    y.parse(process.argv.splice(2));
-
-    if (y.argv.out === 'repo' && !!!y.argv.token) {
-      this.logger.error(`No token provided`);
-      process.exit();
-    }
-
-    if (y.argv.account !== this.defaultAccount) {
-      this.logger.log(`Using account: ${y.argv.account}`);
-    }
-
+    const pargs = y.parse(process.argv.splice(2));
     return {
-      command: y.argv._[0],
-      account: y.argv.account,
-      output: y.argv.out,
-      token: y.argv.token,
+      command: pargs._[0],
+      account: pargs.account,
+      output: pargs.out,
+      token: pargs.token,
     };
+  }
+
+  private validate(pargs: y.Arguments): boolean {
+    if (pargs.out === 'repo' && !!!pargs.token) {
+      y.showHelp();
+      this.logger.error(`No token provided`);
+      process.exit(1);
+    }
+    if (pargs.account !== this.defaultAccount) {
+      this.logger.log(`Using account: ${pargs.account}`);
+    }
+    return true;
   }
 }
