@@ -78,7 +78,7 @@ export class FoldersListGenerator extends BaseGenerator {
         mdText += this.getLineEnd([], -1);
       });
 
-    this.logger.log('Finished list creation', this.logGroupId);
+    this.logger.updateLog('Finished list created', this.logGroupId);
 
     return mdText;
   }

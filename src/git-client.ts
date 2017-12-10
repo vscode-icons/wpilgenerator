@@ -45,19 +45,7 @@ export class GitClient {
       await this.getCodeRepository();
     }
 
-    let hasChanged = false;
-    const spinner: ISpinner = this.logger.spinnerLogStart(`Checking for changes to: '${filename}'`, this.logGroupId);
-    try {
-      hasChanged = await this.checkForDiff(this.codeRepo, filename);
-      this.logger.spinnerLogStop(spinner,
-        `${hasChanged ? 'C' : 'No c'}hanges detected to: '${filename}'`,
-        this.logGroupId);
-
-      return hasChanged;
-    } catch (e) {
-      clearInterval(spinner.timer);
-      throw e;
-    }
+    return this.checkForDiff(this.codeRepo, filename);
   }
 
   public async tryCommitToWikiRepo(filename: string, content: string): Promise<boolean> {

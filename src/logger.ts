@@ -16,15 +16,21 @@ export class Logger {
     this.countLines++;
   }
 
-  public updateLog(message: string, line?: number): void {
+  public updateLog(message: string, groupId?: string): void;
+  public updateLog(message: string, line: number, groupId?: string): void;
+  public updateLog(message: string, lineOrGroupId?: number | string, groupId?: string): void {
+    const line = (typeof lineOrGroupId === 'number' && !Number.isNaN(lineOrGroupId)) ? lineOrGroupId : 1;
+    groupId = (typeof lineOrGroupId === 'string' && Number.isNaN(Number.parseInt(lineOrGroupId)))
+      ? lineOrGroupId
+      : groupId;
+
     if (!process.stdout.isTTY) {
-      process.stdout.write(`${message}\n`);
+      process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
       return;
     }
-    if (!line) { line = 1; }
     readline.moveCursor(process.stdout, 0, -line);
     readline.clearLine(process.stdout, 0);
-    process.stdout.write(`${message}\n`);
+    process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
     readline.moveCursor(process.stdout, 0, line);
   }
 
@@ -36,7 +42,7 @@ export class Logger {
 
   public spinnerLogStop(spinner: ISpinner, message?: string, groupId?: string): void {
     clearInterval(spinner.timer);
-    this.updateLog(`${this.getHeader(groupId)}${message}`, this.countLines - spinner.line);
+    this.updateLog(message, this.countLines - spinner.line, groupId);
     this.cursorShow();
   }
 

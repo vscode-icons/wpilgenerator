@@ -24,10 +24,14 @@ export abstract class BaseGenerator {
   public abstract createList(): string;
 
   public async generate(): Promise<IResult> {
-    const hasChanged = await this.gitClient.checkFileChanged(this.repoFilename);
+    const wikiPageContent = await this.getWikiPage();
+    const createdList = this.createList();
+
+    const hasChanged = this.compareLists(wikiPageContent, createdList);
+
     if (this.pargs.output === 'repo' && !hasChanged) { return; }
 
-    const newWikiPage = await this.createNewWikiPage();
+    const newWikiPage = this.createNewWikiPage(wikiPageContent, createdList);
 
     this.tryWriteToFile(newWikiPage);
 
@@ -172,21 +176,19 @@ export abstract class BaseGenerator {
       ? filePath.replace(`${this.gitClient.dirname}`, '')
       : filePath;
 
-    this.logger.log(`Writing new wiki page to: ${filePathLog}`, this.logGroupId);
+    this.logger.updateLog(`Writing new wiki page to: ${filePathLog}`, this.logGroupId);
     fs.writeFileSync(filePath, content);
   }
 
-  private async createNewWikiPage(): Promise<string> {
-    let newWikiPage = '';
+  private createNewWikiPage(wikePage: string, newList: string): string {
     try {
-      const wikiPage = await this.getWikiPage();
       this.logger.log('Starting new wiki page creation', this.logGroupId);
-      newWikiPage = wikiPage.replace(this.getReplaceText(wikiPage), this.createList());
-      this.logger.log('Finished new wiki page creation', this.logGroupId);
+      const newWikiPage = wikePage.replace(this.getReplaceText(wikePage), newList);
+      this.logger.updateLog('New wiki page created', this.logGroupId);
+      return newWikiPage;
     } catch (e) {
       throw new Error(`Failed creating new wiki page with reason: ${e}`);
     }
-    return newWikiPage;
   }
 
   private getFilenames(extension: models.IFileExtension): string {
@@ -282,5 +284,25 @@ export abstract class BaseGenerator {
 
       https.get(url, response);
     });
+  }
+
+  private compareLists(wikiPageContent, createdList): boolean {
+    if (this.pargs.output !== 'repo') { return false; }
+
+    this.logger.updateLog(`Checking for changes to: '${this.repoFilename}'`, this.logGroupId);
+
+    const newIconsList = createdList.split(/\r\n|\n/gm);
+    if (!!!newIconsList[newIconsList.length - 1]) { newIconsList.pop(); }
+    const currentIconsList = this.getReplaceText(wikiPageContent).split(/\r\n|\n/gm);
+    if (!!!currentIconsList[currentIconsList.length - 1]) { currentIconsList.pop(); }
+
+    this.logger.updateLog('Comparing lists', this.logGroupId);
+
+    const hasChanged = !newIconsList.every((value, index) => value === currentIconsList[index]);
+
+    this.logger.updateLog(`${hasChanged ? 'C' : 'No c'}hanges detected to: '${this.repoFilename}'`,
+      this.logGroupId);
+
+    return hasChanged;
   }
 }

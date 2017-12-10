@@ -30,12 +30,9 @@ export async function main(): Promise<void> {
     switch (pargs.command) {
       case 'all':
         {
-          const filesGitClient = new GitClient(pargs, logger);
-          const foldersGitClient = new GitClient(pargs, logger);
-
           results = await Promise.all([
-            new FilesListGenerator(files, pargs, filesGitClient, logger).generate(),
-            new FoldersListGenerator(folders, pargs, foldersGitClient, logger).generate(),
+            new FilesListGenerator(files, pargs, gitClient, logger).generate(),
+            new FoldersListGenerator(folders, pargs, gitClient, logger).generate(),
           ]);
           results = results.filter(res => res);
           break;
