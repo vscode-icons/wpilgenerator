@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as http from 'http';
 import * as https from 'https';
+import * as url from 'url';
 import * as models from './models';
 import * as utils from './utils';
 import { Logger } from './logger';
@@ -261,9 +262,9 @@ export abstract class BaseGenerator {
         }
       }
 
-      const url = `${this.wikiUrl.replace(/%account%/, this.pargs.account)}/${this.wikiPageFilename}`;
+      const uri = `${this.wikiUrl.replace(/%account%/, this.pargs.account)}/${this.wikiPageFilename}`;
 
-      const spinner: ISpinner = this.logger.spinnerLogStart(`Requesting wiki page from: ${url}`, this.logGroupId);
+      const spinner: ISpinner = this.logger.spinnerLogStart(`Requesting wiki page from: ${uri}`, this.logGroupId);
 
       const response = (resp: http.IncomingMessage): void => {
         const body = [];
@@ -281,8 +282,8 @@ export abstract class BaseGenerator {
           return rej(resp.statusMessage);
         }
       };
-
-      https.get(url, response);
+      const options: https.RequestOptions = url.parse(uri);
+      https.get(options, response);
     });
   }
 
