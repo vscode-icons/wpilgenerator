@@ -85,7 +85,7 @@ export abstract class BaseGenerator {
       hasEntries = !!extension.extensions.length;
     }
 
-    if (fileExtension.languages && !!fileExtension.languages.length) {
+    if (fileExtension.languages && fileExtension.languages.length) {
       // In case there are extensions entries already
       text = hasEntries ? text.replace(/\s*$/, ', ') : text;
       text += this.getLanguageIds(fileExtension);
@@ -201,7 +201,7 @@ export abstract class BaseGenerator {
     extension.extensions.forEach((ext, index) => populateFn(ext, index, extension.extensions));
 
     // filenamesGlobs and extensionGlobs
-    const hasGlobDefinitions = extension.filenamesGlob && !!extension.filenamesGlob.length &&
+    const hasGlobDefinitions: boolean = extension.filenamesGlob && extension.filenamesGlob.length &&
       extension.extensionsGlob && !!extension.extensionsGlob.length;
 
     if (!hasGlobDefinitions) { return text; }

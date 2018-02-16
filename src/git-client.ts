@@ -49,7 +49,7 @@ export class GitClient {
   }
 
   public async tryCommitToWikiRepo(filename: string, content: string): Promise<boolean> {
-    if (this.pargs.output !== 'repo' || !!!content) { return; }
+    if (this.pargs.output !== 'repo' || !content) { return; }
     if (!this.wikiRepo) {
       await this.getWikiRepository();
     }
@@ -85,7 +85,7 @@ export class GitClient {
   }
 
   private async getRepository(url: string, repoFolder: string): Promise<git.Repository> {
-    return !!url && !fs.existsSync(repoFolder)
+    return url && !fs.existsSync(repoFolder)
       ? this.cloneRepo(url, repoFolder)
       : git.Repository.open(repoFolder);
   }

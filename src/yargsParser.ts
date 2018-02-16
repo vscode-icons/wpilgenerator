@@ -58,7 +58,7 @@ export class YargsParser {
   }
 
   private validate(pargs: y.Arguments): boolean {
-    if (pargs.out === 'repo' && !!!pargs.token) {
+    if (pargs.out === 'repo' && !pargs.token) {
       y.showHelp();
       this.logger.error(`No token provided`);
       process.exit(1);
