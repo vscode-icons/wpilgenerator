@@ -25,7 +25,7 @@
         "precompile": "rimraf ./lib",
         "compile": "tsc",
         "compile:w": "npm run compile -- -w",
-        "lint": "tslint --project tsconfig.json",
+        "lint": "tslint -p .",
         "prewpilgen": "npm run lint && npm run compile",
         "wpilgen": "node ./bin/wpilgen"
     },
