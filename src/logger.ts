@@ -52,8 +52,8 @@ export class Logger {
   private spin(message: string, groupId?: string, line?: number): NodeJS.Timer {
     if (!process.stdout.isTTY) { return; }
     let i = 0;
+    this.cursorHide();
     return setInterval(() => {
-      this.cursorHide();
       const frame = this.frames[i = ++i % this.frames.length];
       this.updateLog(`${this.getHeader(groupId)}${frame}${message}`, this.countLines - line);
     }, 80);
