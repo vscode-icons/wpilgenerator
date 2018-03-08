@@ -162,12 +162,12 @@ export abstract class BaseGenerator {
   private normalize(text: string): string {
     const regex = /[_*]/g;
     const match = text.match(regex);
-    if (!!!match) { return text; }
+    if (!match) { return text; }
     return text.replace(regex, `\\${match[0]}`);
   }
 
   private tryWriteToFile(content: string): void {
-    if (!!!content) { return; }
+    if (!content) { return; }
 
     const dirname = this.pargs.output === 'repo'
       ? this.gitClient.wikiRepoFolder
@@ -293,9 +293,9 @@ export abstract class BaseGenerator {
     this.logger.updateLog(`Checking for changes to: '${this.repoFilename}'`, this.logGroupId);
 
     const newIconsList = createdList.split(/\r\n|\n/gm);
-    if (!!!newIconsList[newIconsList.length - 1]) { newIconsList.pop(); }
+    if (!newIconsList[newIconsList.length - 1]) { newIconsList.pop(); }
     const currentIconsList = this.getReplaceText(wikiPageContent).split(/\r\n|\n/gm);
-    if (!!!currentIconsList[currentIconsList.length - 1]) { currentIconsList.pop(); }
+    if (!currentIconsList[currentIconsList.length - 1]) { currentIconsList.pop(); }
 
     this.logger.updateLog('Comparing lists', this.logGroupId);
 

@@ -31,8 +31,8 @@ export function findDirectorySync(dirName: string): string {
 }
 
 export function findFileSync(filePath: string | RegExp, rootPath?: string, results?: string[]): string[] {
-  if (!!!rootPath) { rootPath = path.resolve(); }
-  if (!!!results) { results = []; }
+  if (!rootPath) { rootPath = path.resolve(); }
+  if (!results) { results = []; }
   const files = fs.readdirSync(rootPath);
   for (const file of files) {
     const filename = path.join(rootPath, file);
