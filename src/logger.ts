@@ -43,6 +43,7 @@ export class Logger {
   public spinnerLogStop(spinner: ISpinner, message?: string, groupId?: string): void {
     clearInterval(spinner.timer);
     this.updateLog(message, this.countLines - spinner.line, groupId);
+    if (!process.stdout.isTTY) { return; }
     this.cursorShow();
   }
 
