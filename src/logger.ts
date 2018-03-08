@@ -28,9 +28,11 @@ export class Logger {
       process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
       return;
     }
+    (readline as any).cursorTo(process.stdout, 0);
     readline.moveCursor(process.stdout, 0, -line);
     readline.clearLine(process.stdout, 0);
     process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
+    (readline as any).cursorTo(process.stdout, 0);
     readline.moveCursor(process.stdout, 0, line);
   }
 
