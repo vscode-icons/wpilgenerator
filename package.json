@@ -1,44 +1,44 @@
 {
-    "name": "wpilgenerator",
-    "displayName": "Wiki Page Icons List Generator",
-    "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
-    "version": "0.3.0",
-    "publisher": "vscode-icons",
-    "license": "MIT",
-    "author": {
-        "email": "jimikar@gmail.com",
-        "name": "Jimi (Dimitris) Charalampidis"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/vscode-icons/wpilgenerator"
-    },
-    "bugs": {
-        "url": "https://github.com/vscode-icons/wpilgenerator/issues"
-    },
-    "main": "./lib/wpilgenerator",
-    "bin": {
-        "wpilgen": "./bin/wpilgen"
-    },
-    "scripts": {
-        "postinstall": "npm run compile",
-        "precompile": "rimraf ./lib",
-        "compile": "tsc",
-        "compile:w": "npm run compile -- -w",
-        "lint": "tslint -p .",
-        "prewpilgen": "npm run lint && npm run compile",
-        "wpilgen": "node ./bin/wpilgen"
-    },
-    "dependencies": {
-        "nodegit": "0.18.3",
-        "yargs": "~11.0.0"
-    },
-    "devDependencies": {
-        "@types/node": "~7.0.54",
-        "@types/nodegit": "~0.18.5",
-        "@types/yargs": "~11.0.0",
-        "rimraf": "^2.6.2",
-        "tslint": "^5.9.1",
-        "typescript": "^2.7.2"
-    }
+  "name": "wpilgenerator",
+  "displayName": "Wiki Page Icons List Generator",
+  "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
+  "version": "0.3.1",
+  "publisher": "vscode-icons",
+  "license": "MIT",
+  "author": {
+    "email": "jimikar@gmail.com",
+    "name": "Jimi (Dimitris) Charalampidis"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vscode-icons/wpilgenerator"
+  },
+  "bugs": {
+    "url": "https://github.com/vscode-icons/wpilgenerator/issues"
+  },
+  "main": "./lib/wpilgenerator",
+  "bin": {
+    "wpilgen": "./bin/wpilgen"
+  },
+  "scripts": {
+    "postinstall": "npm run compile",
+    "precompile": "rimraf ./lib",
+    "compile": "tsc",
+    "compile:w": "npm run compile -- -w",
+    "lint": "tslint -p .",
+    "prewpilgen": "npm run lint && npm run compile",
+    "wpilgen": "node ./bin/wpilgen"
+  },
+  "dependencies": {
+    "nodegit": "0.18.3",
+    "yargs": "~11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "~7.0.54",
+    "@types/nodegit": "~0.18.5",
+    "@types/yargs": "~11.0.0",
+    "rimraf": "^2.6.2",
+    "tslint": "^5.9.1",
+    "typescript": "^2.7.2"
+  }
 }
