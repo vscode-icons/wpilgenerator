@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as http from 'http';
-import * as https from 'https';
-import * as url from 'url';
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+import url from 'url';
 import * as models from './models';
 import * as utils from './utils';
 import { Logger } from './logger';

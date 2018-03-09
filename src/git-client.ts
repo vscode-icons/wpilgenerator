@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as git from 'nodegit';
+import fs from 'fs';
+import git from 'nodegit';
 import { Logger } from './logger';
 import { findDirectorySync, pathUnixJoin } from './utils';
 import { IParsedArgs, ISpinner } from './interfaces';

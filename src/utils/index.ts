@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import fs from 'fs';
+import path from 'path';
 
 export function pathUnixJoin(...paths: string[]): string {
   return path.posix.join(...paths);
