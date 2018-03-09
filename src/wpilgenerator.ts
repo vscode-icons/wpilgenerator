@@ -79,5 +79,6 @@ export async function main(): Promise<void> {
   } catch (e) {
     const error = e instanceof Error ? e : new Error(e);
     logger.error(error.stack);
+    process.exit(1);
   }
 }
