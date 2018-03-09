@@ -31,7 +31,7 @@ export class Logger {
     (readline as any).cursorTo(process.stdout, 0);
     readline.moveCursor(process.stdout, 0, -line);
     readline.clearLine(process.stdout, 0);
-    process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
+    process.stdout.write(`${this.getHeader(groupId)}${message}`);
     (readline as any).cursorTo(process.stdout, 0);
     readline.moveCursor(process.stdout, 0, line);
   }
