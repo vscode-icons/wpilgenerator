@@ -56,7 +56,7 @@ export abstract class BaseGenerator {
     let text = '| ';
     if (!extension) { return text; }
     text += this.pargs.useSmallFonts ? '<sub>' : '';
-    text += `${extension.icon} `;
+    text += `[${extension.icon}](#${extension.icon}) `;
     text = this.pargs.useSmallFonts ? text.replace(/\s*$/, '</sub> ') : text;
     return text;
   }
