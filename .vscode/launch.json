@@ -9,7 +9,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch",
-      "program": "${workspaceFolder}/bin/wpilgen",
+      "program": "${workspaceFolder}/lib/cli.js",
       "args": [
         "all",
         "-o",
@@ -21,7 +21,7 @@
       "outFiles": [
         "${workspaceFolder}/lib/**/*.js"
       ],
-      "preLaunchTask": "npm"
+      "preLaunchTask": "npm: build - dev"
     }
   ]
 }

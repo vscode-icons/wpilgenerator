@@ -1,20 +1,6 @@
 {
+  "extends": "./tsconfig.dev.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es6",
-    "outDir": "lib",
-    "lib": [
-      "es6"
-    ],
-    "sourceMap": true,
-    "rootDir": "./src"
-  },
-  "include": [
-    "src/**/*.ts"
-  ]
+    "sourceMap": false
+  }
 }
