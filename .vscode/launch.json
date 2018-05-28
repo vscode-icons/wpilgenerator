@@ -21,7 +21,7 @@
       "outFiles": [
         "${workspaceFolder}/lib/**/*.js"
       ],
-      "preLaunchTask": "npm: build - dev"
+      "preLaunchTask": "npm: compile - dev"
     }
   ]
 }

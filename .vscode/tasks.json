@@ -5,7 +5,7 @@
     "version": "2.0.0",
     "tasks": [
       {
-        "label": "npm: build - dev",
+        "label": "npm: compile - dev",
         // the command is a shell script
         "type": "shell",
         // we want to run npm
@@ -14,10 +14,10 @@
         "presentation": {
           "reveal": "silent"
         },
-        // we run the custom script "build" as defined in package.json
+        // we run the custom script "compile:dev" as defined in package.json
         "args": [
           "run",
-          "build:dev",
+          "compile:dev",
           "--loglevel",
           "silent"
         ],

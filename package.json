@@ -16,7 +16,7 @@
   "bugs": {
     "url": "https://github.com/vscode-icons/wpilgenerator/issues"
   },
-  "main": "./lib/wpilgenerator",
+  "main": "lib/wpilgenerator",
   "bin": {
     "wpilgen": "lib/cli.js"
   },
@@ -25,11 +25,11 @@
   ],
   "scripts": {
     "cleanup": "rimraf ./lib",
-    "prebuild": "npm run cleanup && npm run lint",
-    "build:dev": "npm run build -- -p tsconfig.dev.json",
-    "build": "tsc",
+    "precompile": "npm run cleanup && npm run lint",
+    "compile": "tsc",
+    "compile:dev": "npm run compile -- -p tsconfig.dev.json",
     "lint": "tslint -p .",
-    "prewpilgen": "npm run build",
+    "prewpilgen": "npm run compile",
     "wpilgen": "node ./lib/cli.js"
   },
   "dependencies": {
