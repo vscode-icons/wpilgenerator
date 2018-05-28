@@ -24,6 +24,7 @@
     "lib"
   ],
   "scripts": {
+    "prepublishOnly": "npm run compile",
     "cleanup": "rimraf ./lib",
     "precompile": "npm run cleanup && npm run lint",
     "compile": "tsc",
