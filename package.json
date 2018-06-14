@@ -1,9 +1,7 @@
 {
   "name": "wpilgenerator",
-  "displayName": "Wiki Page Icons List Generator",
   "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
   "version": "0.4.0",
-  "publisher": "vscode-icons",
   "license": "MIT",
   "author": {
     "email": "jimikar@gmail.com",
