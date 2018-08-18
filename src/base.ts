@@ -74,10 +74,23 @@ export abstract class BaseGenerator {
     if (extension.extensions) {
       const isFilename = fileExtension.filename !== undefined && fileExtension.filename;
       if (!isFilename) {
+        const populateFn = (ext, index, list) =>
+          text += `${this.normalize(ext)}${(index === list.length - 1 ? ' ' : ', ')}`;
+
         // extensions
-        extension.extensions.forEach((ext: string, index: number) => {
-          text += `${this.normalize(ext)}${(index === extension.extensions.length - 1 ? ' ' : ', ')}`;
-        });
+        extension.extensions.forEach((ext: string, index: number) => populateFn(ext, index, extension.extensions));
+
+        // filenamesGlobs and extensionGlobs
+        const hasGlobDefinitions: boolean = fileExtension.filenamesGlob && fileExtension.filenamesGlob.length &&
+          fileExtension.extensionsGlob && !!fileExtension.extensionsGlob.length;
+
+        if (hasGlobDefinitions) {
+          // In case there are extensions already
+          text = /^\|\s(?:<sub>)?/.test(text) ? text : text.replace(/\s*$/, ', ');
+
+          utils.combine(fileExtension.filenamesGlob, fileExtension.extensionsGlob)
+            .forEach((ext, index, extensions) => populateFn(ext, index, extensions));
+        }
       } else {
         // filenames
         text += this.getFilenames(fileExtension);
