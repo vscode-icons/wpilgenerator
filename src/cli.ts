@@ -6,9 +6,9 @@ import * as wpilgen from './wpilgenerator';
 (() => {
   const pargv = process.argv;
   const penv = process.env;
-  const allowedNodeVersion = '7.9.0';
+  const allowedNodeVersion = '8.9.3';
   let checkPassed = true;
-  const doCheck = (checkFn, message) => {
+  const doCheck = (checkFn: () => boolean, message: string) => {
     if (!checkPassed) { return; }
     const checkFailed = !!checkFn();
     if (checkFailed) { new Logger().log(message); }
