@@ -20,7 +20,7 @@ export class Logger {
   public updateLog(message: string, line: number, groupId?: string): void;
   public updateLog(message: string, lineOrGroupId?: number | string, groupId?: string): void {
     const line = (typeof lineOrGroupId === 'number' && !Number.isNaN(lineOrGroupId)) ? lineOrGroupId : 1;
-    groupId = (typeof lineOrGroupId === 'string' && Number.isNaN(Number.parseInt(lineOrGroupId)))
+    groupId = (typeof lineOrGroupId === 'string' && Number.isNaN(Number.parseInt(lineOrGroupId, 10)))
       ? lineOrGroupId
       : groupId;
 
