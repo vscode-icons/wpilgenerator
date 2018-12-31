@@ -21,7 +21,7 @@ export async function main(): Promise<void> {
     const baseRegex = 'src(?:(?:\\/|\\\\)[a-zA-Z0-9\\s_@\-^!#$%&+={}\\[\\]]+)*(?:\\/|\\\\)';
     const extensionsRegex = new RegExp(`${baseRegex}supportedExtensions\\.js`);
     const filesPath = findFileSync(extensionsRegex, rootDir)[0];
-    const foldersRegex = new RegExp(`${baseRegex}supportedExtensions\\.js`);
+    const foldersRegex = new RegExp(`${baseRegex}supportedFolders\\.js`);
     const foldersPath = findFileSync(foldersRegex, rootDir)[0];
     const files = require(filesPath).extensions;
     const folders = require(foldersPath).extensions;
