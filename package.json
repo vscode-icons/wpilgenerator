@@ -1,7 +1,7 @@
 {
   "name": "wpilgenerator",
   "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "license": "MIT",
   "author": {
     "email": "jimikar@gmail.com",
