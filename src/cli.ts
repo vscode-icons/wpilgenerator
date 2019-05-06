@@ -6,7 +6,6 @@ import * as wpilgen from './wpilgenerator';
 (() => {
   const pargv = process.argv;
   const penv = process.env;
-  const allowedNodeVersion = '8.9.3';
   let checkPassed = true;
   const doCheck = (checkFn: () => boolean, message: string) => {
     if (!checkPassed) { return; }
@@ -19,8 +18,6 @@ import * as wpilgen from './wpilgenerator';
       'Secure environment variable is not set');
     doCheck(() => penv.TRAVIS_OS_NAME !== 'linux',
       `Running on '${penv.TRAVIS_OS_NAME}' is not allowed`);
-    doCheck(() => penv.TRAVIS_NODE_VERSION !== allowedNodeVersion,
-      `Running on node version '${penv.TRAVIS_NODE_VERSION}' is not allowed`);
     doCheck(() => penv.TRAVIS_PULL_REQUEST !== 'false',
       'Running on Pull Request is not allowed');
     doCheck(() => penv.TRAVIS_BRANCH !== 'master',
