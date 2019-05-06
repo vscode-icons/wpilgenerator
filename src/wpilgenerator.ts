@@ -31,31 +31,28 @@ export async function main(): Promise<void> {
 
     let results: IResult[] = [];
     switch (pargs.command) {
-      case 'all':
-        {
-          results = await Promise.all([
-            new FilesListGenerator(files, pargs, gitClient, logger).generate(),
-            new FoldersListGenerator(folders, pargs, gitClient, logger).generate(),
-          ]);
-          results = results.filter(res => res);
-          break;
+      case 'all': {
+        results = await Promise.all([
+          new FilesListGenerator(files, pargs, gitClient, logger).generate(),
+          new FoldersListGenerator(folders, pargs, gitClient, logger).generate(),
+        ]);
+        results = results.filter(res => res);
+        break;
+      }
+      case 'files': {
+        const result = await new FilesListGenerator(files, pargs, gitClient, logger).generate();
+        if (result) {
+          results.push(result);
         }
-      case 'files':
-        {
-          const result = await new FilesListGenerator(files, pargs, gitClient, logger).generate();
-          if (result) {
-            results.push(result);
-          }
-          break;
+        break;
+      }
+      case 'folders': {
+        const result = await new FoldersListGenerator(folders, pargs, gitClient, logger).generate();
+        if (result) {
+          results.push(result);
         }
-      case 'folders':
-        {
-          const result = await new FoldersListGenerator(folders, pargs, gitClient, logger).generate();
-          if (result) {
-            results.push(result);
-          }
-          break;
-        }
+        break;
+      }
     }
 
     let hasCommit: boolean;
