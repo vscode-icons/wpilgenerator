@@ -51,9 +51,9 @@ export class YargsParser {
     const pargs = y.parse(process.argv.splice(2));
     return {
       command: pargs._[0],
-      account: pargs.account,
-      output: pargs.out,
-      token: pargs.token,
+      account: pargs.account as string,
+      output: pargs.out as string,
+      token: pargs.token as string,
     };
   }
 
