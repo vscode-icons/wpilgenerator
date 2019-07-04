@@ -32,11 +32,14 @@
     "compile:dev": "npm run compile -- -p tsconfig.dev.json",
     "lint": "tslint -p .",
     "prewpilgen": "npm run compile",
-    "wpilgen": "node ./lib/cli.js"
+    "wpilgen": "node ./lib/cli.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "nodegit": "0.24.3",
-    "yargs": "~13.2.2"
+    "yargs": "~13.2.2",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@types/node": "8",
@@ -45,5 +48,6 @@
     "rimraf": "^2.6.3",
     "tslint": "^5.16.0",
     "typescript": "^3.4.5"
-  }
+  },
+  "snyk": true
 }
