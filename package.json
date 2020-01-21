@@ -35,7 +35,7 @@
     "wpilgen": "node ./lib/cli.js"
   },
   "dependencies": {
-    "nodegit": "0.24.3",
+    "nodegit": "0.26.3",
     "yargs": "~13.3.0"
   },
   "devDependencies": {
