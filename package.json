@@ -15,7 +15,7 @@
     "url": "https://github.com/vscode-icons/wpilgenerator/issues"
   },
   "engines": {
-    "node": "8.* || >=10.*"
+    "node": ">=10.*"
   },
   "main": "lib/wpilgenerator",
   "bin": {
@@ -35,15 +35,16 @@
     "wpilgen": "node ./lib/cli.js"
   },
   "dependencies": {
-    "nodegit": "0.24.3",
-    "yargs": "~13.3.0"
+    "nodegit": "0.26.4",
+    "yargs": "~15.1.0"
   },
   "devDependencies": {
-    "@types/node": "8",
-    "@types/nodegit": "~0.24.8",
-    "@types/yargs": "~13.0.0",
-    "rimraf": "^2.6.3",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "@types/node": "10",
+    "@types/nodegit": "~0.26.1",
+    "@types/yargs": "~15.0.1",
+    "husky": "^4.2.1",
+    "rimraf": "^3.0.0",
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   }
 }
