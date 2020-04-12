@@ -1,11 +1,10 @@
-
-import { Logger } from './logger';
-import { YargsParser } from './yargsParser';
-import { findDirectorySync, findFileSync } from './utils';
-import { IResult } from './interfaces';
-import { GitClient } from './git-client';
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
+import { GitClient } from './git-client';
+import { IResult } from './interfaces';
+import { Logger } from './logger';
+import { findDirectorySync, findFileSync } from './utils';
+import { YargsParser } from './yargsParser';
 
 export async function main(): Promise<void> {
   const logger = new Logger();
@@ -17,37 +16,71 @@ export async function main(): Promise<void> {
     // Locate 'vscode-icons' root directory
     const rootDir = findDirectorySync('vscode-icons');
 
+    if (!rootDir) {
+      throw Error(
+        `Directory 'vscode-icons' could not be found, ` +
+          `try cloning the repository first, in the parent directory.`,
+      );
+    }
+
     // Find files and folders path
-    const baseRegex = 'src(?:(?:\\/|\\\\)[a-zA-Z0-9\\s_@\-^!#$%&+={}\\[\\]]+)*(?:\\/|\\\\)';
+    const baseRegex =
+      'src(?:(?:\\/|\\\\)[a-zA-Z0-9\\s_@-^!#$%&+={}\\[\\]]+)*(?:\\/|\\\\)';
     const extensionsRegex = new RegExp(`${baseRegex}supportedExtensions\\.js`);
     const filesPath = findFileSync(extensionsRegex, rootDir)[0];
     const foldersRegex = new RegExp(`${baseRegex}supportedFolders\\.js`);
     const foldersPath = findFileSync(foldersRegex, rootDir)[0];
+
+    if (!filesPath || !foldersPath) {
+      throw Error(
+        `Looks like 'vscode-icons' has not been build yet, ` +
+          `try performing a build first.`,
+      );
+    }
+
     const files = require(filesPath).extensions;
     const folders = require(foldersPath).extensions;
 
     // clone or open repo
-    await Promise.all([gitClient.getCodeRepository(), gitClient.getWikiRepository()]);
+    await Promise.all([
+      gitClient.getCodeRepository(),
+      gitClient.getWikiRepository(),
+    ]);
 
     let results: IResult[] = [];
     switch (pargs.command) {
       case 'all': {
         results = await Promise.all([
           new FilesListGenerator(files, pargs, gitClient, logger).generate(),
-          new FoldersListGenerator(folders, pargs, gitClient, logger).generate(),
+          new FoldersListGenerator(
+            folders,
+            pargs,
+            gitClient,
+            logger,
+          ).generate(),
         ]);
-        results = results.filter(res => res);
+        results = results.filter((res: IResult) => res);
         break;
       }
       case 'files': {
-        const result = await new FilesListGenerator(files, pargs, gitClient, logger).generate();
+        const result = await new FilesListGenerator(
+          files,
+          pargs,
+          gitClient,
+          logger,
+        ).generate();
         if (result) {
           results.push(result);
         }
         break;
       }
       case 'folders': {
-        const result = await new FoldersListGenerator(folders, pargs, gitClient, logger).generate();
+        const result = await new FoldersListGenerator(
+          folders,
+          pargs,
+          gitClient,
+          logger,
+        ).generate();
         if (result) {
           results.push(result);
         }
@@ -62,9 +95,15 @@ export async function main(): Promise<void> {
           await callback(array[index], index, array);
         }
       };
-      await asyncForEach(results, async result => {
-        if (!result) { return; }
-        hasCommit = await gitClient.tryCommitToWikiRepo(result.filename, result.content) || hasCommit;
+      await asyncForEach(results, async (result: any) => {
+        if (!result) {
+          return;
+        }
+        hasCommit =
+          (await gitClient.tryCommitToWikiRepo(
+            result.filename,
+            result.content,
+          )) || hasCommit;
       });
     }
 
@@ -73,7 +112,6 @@ export async function main(): Promise<void> {
     }
 
     logger.log('Finished');
-
   } catch (e) {
     const error = e instanceof Error ? e : new Error(e);
     logger.error(error.stack);

@@ -17,34 +17,50 @@
   "engines": {
     "node": ">=10.*"
   },
-  "main": "lib/wpilgenerator",
+  "main": "lib/wpilgen.js",
   "bin": {
-    "wpilgen": "lib/cli.js"
+    "wpilgen": "lib/wpilgen.js"
   },
   "files": [
     "lib"
   ],
   "scripts": {
-    "prepublishOnly": "npm run compile",
+    "reinstall": "rimraf ./package-lock.json ./node_modules && npm i",
     "cleanup": "rimraf ./lib",
-    "precompile": "npm run cleanup && npm run lint",
-    "compile": "tsc",
+    "precompile:dev": "npm run lint",
     "compile:dev": "npm run compile -- -p tsconfig.dev.json",
-    "lint": "tslint -p .",
-    "prewpilgen": "npm run compile",
+    "precompile": "npm run cleanup",
+    "compile": "tsc",
+    "compile:w": "npm run compile -- -w",
+    "lint": "eslint . --ext .ts",
+    "prebundle": "npm run cleanup",
+    "bundle": "rollup -c",
+    "prewpilgen": "npm run lint && npm run compile",
     "wpilgen": "node ./lib/cli.js"
   },
   "dependencies": {
-    "nodegit": "0.26.4",
-    "yargs": "~15.1.0"
+    "nodegit": "0.26.5",
+    "yargs": "~15.3.1"
   },
   "devDependencies": {
     "@types/node": "10",
-    "@types/nodegit": "~0.26.1",
-    "@types/yargs": "~15.0.1",
-    "husky": "^4.2.1",
-    "rimraf": "^3.0.0",
-    "tslint": "^6.0.0",
-    "typescript": "^3.7.5"
+    "@types/nodegit": "~0.26.2",
+    "@types/yargs": "~15.0.4",
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "@rollup/plugin-typescript": "3.1.1",
+    "builtin-modules": "^3.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.1.3",
+    "prettier": "^2.0.4",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.6.0",
+    "rollup-plugin-preserve-shebangs": "^0.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "typescript": "^3.8.3"
   }
 }
