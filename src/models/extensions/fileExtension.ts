@@ -1,7 +1,9 @@
-import { IExtension } from './extension';
 import { ILanguage } from '../language';
+import { IExtension } from './extension';
 
 export interface IFileExtension extends IExtension {
+  /** @interal */
+  checked?: boolean;
   filename?: boolean; // set to true if the extension represents the whole file name.
   languages?: ILanguage[]; // collection of languages associated to the icon.
   filenamesGlob?: string[]; // array of file names to generate with file extensions to associate to the icon.

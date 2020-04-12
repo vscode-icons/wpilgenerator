@@ -1,6 +1,6 @@
-import y = require('yargs');
-import { Logger } from './logger';
+import y from 'yargs';
 import { IParsedArgs } from './interfaces';
+import { Logger } from './logger';
 
 export class YargsParser {
   private readonly allowedOutputs = ['file', 'repo'];
@@ -30,9 +30,11 @@ export class YargsParser {
       },
     };
 
-    y
-      .usage('Usage: $0 <command> [options]')
-      .command('all', 'Generates the list of files and list of folders wiki page')
+    y.usage('Usage: $0 <command> [options]')
+      .command(
+        'all',
+        'Generates the list of files and list of folders wiki page',
+      )
       .command('files', 'Generates the list of files wiki page')
       .command('folders', 'Generates the list of folders wiki page')
       .demandCommand(1, 'Missing command')
