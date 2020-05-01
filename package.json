@@ -36,11 +36,14 @@
     "prebundle": "npm run cleanup",
     "bundle": "rollup -c",
     "prewpilgen": "npm run lint && npm run compile",
-    "wpilgen": "node ./lib/cli.js"
+    "wpilgen": "node ./lib/cli.js",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "nodegit": "0.26.5",
-    "yargs": "~15.3.1"
+    "yargs": "~15.3.1",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@types/node": "10",
@@ -62,5 +65,6 @@
     "rollup-plugin-preserve-shebangs": "^0.2.0",
     "rollup-plugin-terser": "^5.3.0",
     "typescript": "^3.8.3"
-  }
+  },
+  "snyk": true
 }
