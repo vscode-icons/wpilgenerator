@@ -15,7 +15,6 @@
         "-o",
         "file"
       ],
-      "runtimeVersion": "7.9.0",
       "stopOnEntry": false,
       "sourceMaps": true,
       "outFiles": [

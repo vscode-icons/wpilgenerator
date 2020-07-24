@@ -1,4 +1,4 @@
-import readline from 'readline';
+import { clearLine, cursorTo, moveCursor } from 'readline';
 import { ISpinner } from './interfaces';
 
 export class Logger {
@@ -36,12 +36,12 @@ export class Logger {
       process.stdout.write(`${this.getHeader(groupId)}${message}\n`);
       return;
     }
-    (readline as any).cursorTo(process.stdout, 0);
-    readline.moveCursor(process.stdout, 0, -line);
-    readline.clearLine(process.stdout, 0);
+    cursorTo(process.stdout, 0);
+    moveCursor(process.stdout, 0, -line);
+    clearLine(process.stdout, 0);
     process.stdout.write(`${this.getHeader(groupId)}${message}`);
-    (readline as any).cursorTo(process.stdout, 0);
-    readline.moveCursor(process.stdout, 0, line);
+    cursorTo(process.stdout, 0);
+    moveCursor(process.stdout, 0, line);
   }
 
   public spinnerLogStart(message: string, groupId?: string): ISpinner {

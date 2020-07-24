@@ -7,6 +7,7 @@ import { IParsedArgs, IResult, ISpinner } from './interfaces';
 import { Logger } from './logger';
 import * as models from './models';
 import * as utils from './utils';
+import { ILanguage } from './models/language';
 
 export abstract class BaseGenerator {
   public readonly defaultPrefix = 'default_';
@@ -82,7 +83,11 @@ export abstract class BaseGenerator {
       const isFilename =
         fileExtension.filename !== undefined && fileExtension.filename;
       if (!isFilename) {
-        const populateFn = (ext, index, list): string =>
+        const populateFn = (
+          ext: string,
+          index: number,
+          list: string[],
+        ): string =>
           (text += `${this.normalize(ext)}${
             index === list.length - 1 ? ' ' : ', '
           }`);
@@ -245,14 +250,16 @@ export abstract class BaseGenerator {
       this.logger.updateLog('New wiki page created', this.logGroupId);
       return newWikiPage;
     } catch (e) {
-      throw new Error(`Failed creating new wiki page with reason: ${e}`);
+      throw new Error(
+        `Failed creating new wiki page with reason: ${(e as Error)?.toString()}`,
+      );
     }
   }
 
   private getFilenames(extension: models.IFileExtension): string {
     let text = '';
 
-    const populateFn = (ext, index, list): string =>
+    const populateFn = (ext: string, index: number, list: string[]): string =>
       (text += `**${ext}**${index === list.length - 1 ? ' ' : ', '}`);
 
     // extensions as filenames
@@ -284,12 +291,16 @@ export abstract class BaseGenerator {
   private getLanguageIds(extension: models.IFileExtension): string {
     let text = '';
 
-    const populateFn = (langIds, index, list): string =>
+    const populateFn = (
+      langIds: string,
+      index: number,
+      list: string[] | ILanguage[],
+    ): string =>
       (text += `\`${langIds}\`${index === list.length - 1 ? ' ' : ', '}`);
 
     extension.languages.forEach((lang, index) => {
       if (Array.isArray(lang.ids)) {
-        lang.ids.forEach((langId, lIndex, list) =>
+        lang.ids.forEach((langId: string, lIndex: number, list: string[]) =>
           populateFn(langId, lIndex, list),
         );
         return;
@@ -373,7 +384,7 @@ export abstract class BaseGenerator {
     });
   }
 
-  private compareLists(wikiPageContent, createdList): boolean {
+  private compareLists(wikiPageContent: string, createdList: string): boolean {
     if (this.pargs.output !== 'repo') {
       return false;
     }

@@ -5,7 +5,11 @@ export function pathUnixJoin(...paths: string[]): string {
   return path.posix.join(...paths);
 }
 
-export function combine(array1: any[], array2: any[], separator = '.'): any[] {
+export function combine(
+  array1: string[],
+  array2: string[],
+  separator = '.',
+): string[] {
   return array1.reduce(
     (previous: string[], current: string) =>
       previous.concat(

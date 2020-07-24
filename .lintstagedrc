@@ -1,6 +1,6 @@
 {
   "src/**/*.ts": [
     "prettier --write",
-    "eslint . --ext .ts"
+    "eslint --ext .ts ."
   ]
 }

@@ -43,5 +43,5 @@ import { main } from './wpilgenerator';
     }
     pargv.push('all', '-o', 'repo', '-t', penv.GH_TOKEN);
   }
-  main();
+  void main();
 })();
