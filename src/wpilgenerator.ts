@@ -5,6 +5,7 @@ import { IResult } from './interfaces';
 import { Logger } from './logger';
 import { findDirectorySync, findFileSync } from './utils';
 import { YargsParser } from './yargsParser';
+import { IFileCollection, IFolderCollection } from './models';
 
 export async function main(): Promise<void> {
   const logger = new Logger();
@@ -38,8 +39,14 @@ export async function main(): Promise<void> {
       );
     }
 
-    const files = require(filesPath).extensions;
-    const folders = require(foldersPath).extensions;
+    const files: IFileCollection = ((await import(filesPath)) as Record<
+      string,
+      IFileCollection
+    >).extensions;
+    const folders: IFolderCollection = ((await import(foldersPath)) as Record<
+      string,
+      IFolderCollection
+    >).extensions;
 
     // clone or open repo
     await Promise.all([
@@ -90,21 +97,13 @@ export async function main(): Promise<void> {
 
     let hasCommit: boolean;
     if (results) {
-      const asyncForEach = async (array, callback): Promise<void> => {
-        for (let index = 0; index < array.length; index++) {
-          await callback(array[index], index, array);
-        }
-      };
-      await asyncForEach(results, async (result: any) => {
-        if (!result) {
-          return;
-        }
+      for (const result of results) {
         hasCommit =
           (await gitClient.tryCommitToWikiRepo(
             result.filename,
             result.content,
           )) || hasCommit;
-      });
+      }
     }
 
     if (hasCommit) {

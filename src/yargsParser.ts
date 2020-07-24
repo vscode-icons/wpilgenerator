@@ -66,7 +66,7 @@ export class YargsParser {
       process.exit(1);
     }
     if (pargs.account !== this.defaultAccount) {
-      this.logger.log(`Using account: ${pargs.account}`);
+      this.logger.log(`Using account: ${pargs.account as string}`);
     }
     return true;
   }
