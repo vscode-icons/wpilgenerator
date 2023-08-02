@@ -97,11 +97,10 @@ export async function main(): Promise<void> {
     let hasCommit: boolean;
     if (results) {
       for (const result of results) {
-        hasCommit =
-          (await gitClient.tryCommitToWikiRepo(
-            result.filename,
-            result.content,
-          )) || hasCommit;
+        hasCommit ||= await gitClient.tryCommitToWikiRepo(
+          result.filename,
+          result.content,
+        );
       }
     }
 

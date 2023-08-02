@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 
+import { exit } from 'process';
 import { Logger } from './logger';
 import { main } from './wpilgenerator';
 
 ((): void => {
+  const logger = new Logger();
   const pargv = process.argv;
   const penv = process.env;
   let checkPassed = true;
@@ -13,33 +15,41 @@ import { main } from './wpilgenerator';
     }
     const checkFailed = !!checkFn();
     if (checkFailed) {
-      new Logger().log(message);
+      logger.log(message);
     }
     checkPassed = !checkFailed;
   };
+
   if (pargv.length === 2) {
     doCheck(
-      () => penv.TRAVIS_SECURE_ENV_VARS !== 'true' || penv.GH_TOKEN === '',
-      'Secure environment variable is not set',
+      () => !penv.GH_TOKEN || penv.GH_TOKEN === '',
+      'GitHub token environment variable is not set',
     );
     doCheck(
-      () => penv.TRAVIS_OS_NAME !== 'linux',
-      `Running on '${penv.TRAVIS_OS_NAME}' is not allowed`,
+      () => penv.RUNNER_OS !== 'Linux',
+      `Running on '${penv.RUNNER_OS}' is not allowed`,
     );
     doCheck(
-      () => penv.TRAVIS_PULL_REQUEST !== 'false',
-      'Running on Pull Request is not allowed',
+      () =>
+        penv.GITHUB_EVENT_NAME !== 'push' &&
+        penv.GITHUB_REF_NAME !== 'workflow_dispatch',
+      `Running on '${penv.GITHUB_EVENT_NAME}' is not allowed`,
     );
     doCheck(
-      () => penv.TRAVIS_BRANCH !== 'master',
-      `Running on branch '${penv.TRAVIS_BRANCH}' is not allowed`,
+      () => penv.GITHUB_REF_TYPE !== 'branch',
+      `Running on '${penv.GITHUB_REF_TYPE}' is not allowed`,
     );
     doCheck(
-      () => penv.TRAVIS_REPO_SLUG !== 'vscode-icons/vscode-icons',
-      `Running on '${penv.TRAVIS_REPO_SLUG}' is not allowed`,
+      () =>
+        penv.GITHUB_REF_NAME !== 'master' && penv.GITHUB_REF_NAME !== 'main',
+      `Running on branch '${penv.GITHUB_REF_NAME}' is not allowed`,
+    );
+    doCheck(
+      () => penv.GITHUB_REPOSITORY !== 'JimiC/vscode-icons',
+      `Running on '${penv.GITHUB_REPOSITORY}' is not allowed`,
     );
     if (!checkPassed) {
-      return;
+      exit(1);
     }
     pargv.push('all', '-o', 'repo', '-t', penv.GH_TOKEN);
   }

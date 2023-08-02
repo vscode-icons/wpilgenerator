@@ -12,10 +12,8 @@ import { ILanguage } from './models/language';
 export abstract class BaseGenerator {
   public readonly defaultPrefix = 'default_';
 
-  private readonly imagesUrl =
-    'https://github.com/vscode-icons/vscode-icons/blob/master/icons/';
-  private readonly wikiUrl =
-    'https://raw.githubusercontent.com/wiki/%account%/vscode-icons';
+  protected readonly imagesUrl: string;
+  protected readonly wikiUrl: string;
 
   constructor(
     private wikiPageFilename: string,
@@ -24,7 +22,10 @@ export abstract class BaseGenerator {
     private gitClient: GitClient,
     protected logger: Logger,
     protected logGroupId: string,
-  ) {}
+  ) {
+    this.imagesUrl = `https://github.com/${pargs.account}/vscode-icons/blob/master/icons/`;
+    this.wikiUrl = `https://raw.githubusercontent.com/wiki/${pargs.account}/vscode-icons`;
+  }
 
   public async generate(): Promise<IResult> {
     const wikiPageContent = await this.getWikiPage();
@@ -351,9 +352,7 @@ export abstract class BaseGenerator {
         }
       }
 
-      const uri = `${this.wikiUrl.replace(/%account%/, this.pargs.account)}/${
-        this.wikiPageFilename
-      }`;
+      const uri = `${this.wikiUrl}/${this.wikiPageFilename}`;
 
       const spinner: ISpinner = this.logger.spinnerLogStart(
         `Requesting wiki page from: ${uri}`,
