@@ -7,19 +7,18 @@
   "configurations": [
     {
       "type": "node",
+      "runtimeVersion": "14",
       "request": "launch",
       "name": "Launch",
       "program": "${workspaceFolder}/lib/cli.js",
       "args": [
-        "all",
-        "-o",
-        "file"
+        // "all",
+        // "-o",
+        // "file"
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outFiles": [
-        "${workspaceFolder}/lib/**/*.js"
-      ],
+      "outFiles": ["${workspaceFolder}/lib/**/*.js"],
       "preLaunchTask": "npm: compile - dev"
     }
   ]

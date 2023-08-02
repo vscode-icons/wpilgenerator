@@ -49,10 +49,10 @@ export class YargsParser {
       .strict();
   }
 
-  public parse(): IParsedArgs {
-    const pargs = y.parse(process.argv.splice(2));
+  public async parse(): Promise<IParsedArgs> {
+    const pargs = await y.parse(process.argv.splice(2));
     return {
-      command: pargs._[0],
+      command: pargs._[0] as string,
       account: pargs.account as string,
       output: pargs.out as string,
       token: pargs.token as string,

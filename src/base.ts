@@ -251,7 +251,9 @@ export abstract class BaseGenerator {
       return newWikiPage;
     } catch (e) {
       throw new Error(
-        `Failed creating new wiki page with reason: ${(e as Error)?.toString()}`,
+        `Failed creating new wiki page with reason: ${(
+          e as Error
+        )?.toString()}`,
       );
     }
   }
@@ -398,9 +400,8 @@ export abstract class BaseGenerator {
     if (!newIconsList[newIconsList.length - 1]) {
       newIconsList.pop();
     }
-    const currentIconsList = this.getReplaceText(wikiPageContent).split(
-      /\r\n|\n/gm,
-    );
+    const currentIconsList =
+      this.getReplaceText(wikiPageContent).split(/\r\n|\n/gm);
     if (!currentIconsList[currentIconsList.length - 1]) {
       currentIconsList.pop();
     }
