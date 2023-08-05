@@ -17,7 +17,10 @@ export class GitClient {
   private codeRepo: git.Repository;
   private wikiRepo: git.Repository;
 
-  constructor(private pargs: IParsedArgs, private logger: Logger) {
+  constructor(
+    private pargs: IParsedArgs,
+    private logger: Logger,
+  ) {
     this.codeRepoUrl = 'https://github.com/%account%/vscode-icons'.replace(
       /%account%/,
       this.pargs.account,
@@ -142,7 +145,7 @@ export class GitClient {
       this.logGroupId,
     );
     try {
-      const clone = await git.Clone.clone(url, repoFolder);
+      const clone = await git.Clone(url, repoFolder);
       this.logger.spinnerLogStop(
         spinner,
         message.replace('Cloning', 'Cloned'),
@@ -175,9 +178,8 @@ export class GitClient {
       // git add
       await index.addByPath(filename);
 
-      if (!index.write()) {
-        throw new Error(`Failed writing repo index.`);
-      }
+      // git write
+      await index.write();
 
       const matches: RegExpMatchArray = /files|folders/i.exec(filename);
       const name = matches && matches[0];
@@ -186,12 +188,13 @@ export class GitClient {
       }
       const commitMessage = `:robot: Update list of ${name.toLowerCase()}`;
       const time = +(Date.now() / 1000).toFixed(0); // unix UTC
+      // our own bot!!
       const author = git.Signature.create(
         'vscode-icons-bot',
         'vscode-icons-bot@github.com',
         time,
         0,
-      ); // our own bot!!
+      );
       const committer = author;
       const oid = await index.writeTree();
       const headId = await git.Reference.nameToId(repo, 'HEAD');

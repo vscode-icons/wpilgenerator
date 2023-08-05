@@ -11,7 +11,8 @@ export async function main(): Promise<void> {
   const logger = new Logger();
 
   try {
-    const pargs = new YargsParser(logger).parse();
+    const yargsParser = new YargsParser(logger);
+    const pargs = await yargsParser.parse();
     const gitClient = new GitClient(pargs, logger);
 
     // Locate 'vscode-icons' root directory
@@ -39,14 +40,12 @@ export async function main(): Promise<void> {
       );
     }
 
-    const files: IFileCollection = ((await import(filesPath)) as Record<
-      string,
-      IFileCollection
-    >).extensions;
-    const folders: IFolderCollection = ((await import(foldersPath)) as Record<
-      string,
-      IFolderCollection
-    >).extensions;
+    const files: IFileCollection = (
+      (await import(filesPath)) as Record<string, IFileCollection>
+    ).extensions;
+    const folders: IFolderCollection = (
+      (await import(foldersPath)) as Record<string, IFolderCollection>
+    ).extensions;
 
     // clone or open repo
     await Promise.all([
@@ -98,11 +97,10 @@ export async function main(): Promise<void> {
     let hasCommit: boolean;
     if (results) {
       for (const result of results) {
-        hasCommit =
-          (await gitClient.tryCommitToWikiRepo(
-            result.filename,
-            result.content,
-          )) || hasCommit;
+        hasCommit ||= await gitClient.tryCommitToWikiRepo(
+          result.filename,
+          result.content,
+        );
       }
     }
 
@@ -112,7 +110,7 @@ export async function main(): Promise<void> {
 
     logger.log('Finished');
   } catch (e) {
-    const error = e instanceof Error ? e : new Error(e);
+    const error = e instanceof Error ? e : new Error(e as string);
     logger.error(error.stack);
     process.exit(1);
   }

@@ -1,7 +1,7 @@
+import terser from '@rollup/plugin-terser';
+import ts from '@rollup/plugin-typescript';
 import builtins from 'builtin-modules';
 import { preserveShebangs } from 'rollup-plugin-preserve-shebangs';
-import { terser } from 'rollup-plugin-terser';
-import ts from '@rollup/plugin-typescript';
 import typescript from 'typescript';
 import pkg from './package.json';
 
