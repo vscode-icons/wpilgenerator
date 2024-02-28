@@ -45,7 +45,7 @@ import { main } from './wpilgenerator';
       `Running on branch '${penv.GITHUB_REF_NAME}' is not allowed`,
     );
     doCheck(
-      () => penv.GITHUB_REPOSITORY !== 'JimiC/vscode-icons',
+      () => penv.GITHUB_REPOSITORY !== 'vscode-icons/vscode-icons',
       `Running on '${penv.GITHUB_REPOSITORY}' is not allowed`,
     );
     if (!checkPassed) {
