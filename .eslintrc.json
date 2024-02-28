@@ -69,10 +69,10 @@
       }
     ],
     "@typescript-eslint/no-empty-function": "error",
-    "@typescript-eslint/no-parameter-properties": [
+    "@typescript-eslint/parameter-properties": [
       "error",
       {
-        "allows": ["private", "protected"]
+        "allow": ["private", "protected"]
       }
     ],
     "@typescript-eslint/no-use-before-define": "error",

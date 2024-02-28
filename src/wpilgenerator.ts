@@ -1,6 +1,6 @@
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
-import { GitClient } from './git-client';
+import { SimpleGitClient } from './simplegit-client';
 import { IResult } from './interfaces';
 import { Logger } from './logger';
 import { findDirectorySync, findFileSync } from './utils';
@@ -13,7 +13,7 @@ export async function main(): Promise<void> {
   try {
     const yargsParser = new YargsParser(logger);
     const pargs = await yargsParser.parse();
-    const gitClient = new GitClient(pargs, logger);
+    const gitClient = new SimpleGitClient(pargs, logger);
 
     // Locate 'vscode-icons' root directory
     const rootDir = findDirectorySync('vscode-icons');
@@ -96,12 +96,14 @@ export async function main(): Promise<void> {
 
     let hasCommit: boolean;
     if (results) {
-      for (const result of results) {
-        hasCommit ||= await gitClient.tryCommitToWikiRepo(
-          result.filename,
-          result.content,
-        );
-      }
+      await Promise.all(
+        results.map(async (result: IResult) => {
+          hasCommit ||= await gitClient.tryCommitToWikiRepo(
+            result.filename,
+            result.content,
+          );
+        }),
+      );
     }
 
     if (hasCommit) {
