@@ -98,7 +98,6 @@ export class SimpleGitClient extends GitClient {
       this.logGroupId,
     );
     try {
-      const repo = simpleGit();
       await simpleGit()
         .clone(url, repoFolder, depth ? { '--depth': depth } : [])
         .cwd(repoFolder);
@@ -107,6 +106,7 @@ export class SimpleGitClient extends GitClient {
         message.replace('Cloning', 'Cloned'),
         this.logGroupId,
       );
+      const repo = simpleGit(repoFolder);
       return repo;
     } catch (e) {
       clearInterval(spinner.timer);

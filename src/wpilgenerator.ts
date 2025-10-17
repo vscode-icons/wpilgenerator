@@ -1,11 +1,11 @@
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
-import { SimpleGitClient } from './simplegit-client';
 import { IResult } from './interfaces';
 import { Logger } from './logger';
+import { IFileCollection, IFolderCollection } from './models';
+import { SimpleGitClient } from './simplegit-client';
 import { findDirectorySync, findFileSync } from './utils';
 import { YargsParser } from './yargsParser';
-import { IFileCollection, IFolderCollection } from './models';
 
 export async function main(): Promise<void> {
   const logger = new Logger();

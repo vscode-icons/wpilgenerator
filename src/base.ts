@@ -6,8 +6,8 @@ import { GitClient } from './git-client';
 import { IParsedArgs, IResult, ISpinner } from './interfaces';
 import { Logger } from './logger';
 import * as models from './models';
-import * as utils from './utils';
 import { ILanguage } from './models/language';
+import * as utils from './utils';
 
 export abstract class BaseGenerator {
   public readonly defaultPrefix = 'default_';
@@ -241,14 +241,16 @@ export abstract class BaseGenerator {
     fs.writeFileSync(filePath, content);
   }
 
-  private createNewWikiPage(wikePage: string, newList: string): string {
+  private createNewWikiPage(wikiPage: string, newList: string): string {
     try {
       this.logger.log('Starting new wiki page creation', this.logGroupId);
-      const newWikiPage = wikePage.replace(
-        this.getReplaceText(wikePage),
+      this.logger.log('');
+      const newWikiPage = wikiPage.replace(
+        this.getReplaceText(wikiPage),
         newList,
       );
       this.logger.updateLog('New wiki page created', this.logGroupId);
+      this.logger.log('');
       return newWikiPage;
     } catch (e) {
       throw new Error(
