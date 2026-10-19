@@ -3,4 +3,4 @@ if [ "$CI" = "true" ]; then
   exit 0
 fi
 
-npx lint-staged && npm run bundle && git add .
+npx lint-staged && npm run bundle && git add -- ./lib/wpilgen.js
