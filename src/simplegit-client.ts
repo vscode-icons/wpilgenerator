@@ -3,6 +3,7 @@ import type {
   Options,
   RemoteWithRefs,
   SimpleGit,
+  SimpleGitOptions,
   TaskOptions,
 } from 'simple-git';
 
@@ -16,6 +17,10 @@ import { simpleGit } from 'simple-git';
 
 import { GitClient } from './git-client';
 import { Mutex } from './mutex';
+
+const gitOptions: Partial<SimpleGitOptions> = {
+  unsafe: { allowUnsafeCredentialHelper: true },
+};
 
 export class SimpleGitClient extends GitClient {
   private mutex: Mutex;
@@ -101,7 +106,7 @@ export class SimpleGitClient extends GitClient {
   ): Promise<SimpleGit> {
     return url && !fs.existsSync(repoFolder)
       ? this.cloneRepo(url, repoFolder, depth)
-      : Promise.resolve(simpleGit(repoFolder));
+      : Promise.resolve(simpleGit(repoFolder, gitOptions));
   }
 
   private async cloneRepo(
@@ -128,7 +133,7 @@ export class SimpleGitClient extends GitClient {
         message.replace('Cloning', 'Cloned'),
         this.logGroupId,
       );
-      return simpleGit(repoFolder);
+      return simpleGit(repoFolder, gitOptions);
     } catch (e) {
       clearInterval(spinner.timer);
       throw e;
