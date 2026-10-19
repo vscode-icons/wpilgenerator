@@ -1,5 +1,7 @@
+import type { ISpinner } from './interfaces';
+
 import { clearLine, cursorTo, moveCursor } from 'readline';
-import { ISpinner } from './interfaces';
+import { styleText } from 'util';
 
 export class Logger {
   private frames = ['- ', '\\ ', '| ', '/ '];
@@ -11,7 +13,11 @@ export class Logger {
   }
 
   public error(message: string, groupId?: string): void {
-    process.stderr.write(`${this.getHeader(groupId)}${message}\n`);
+    process.stderr.write(
+      styleText('red', `${this.getHeader(groupId)}${message}\n`, {
+        stream: process.stderr,
+      }),
+    );
     this.countLines++;
   }
 
@@ -56,20 +62,24 @@ export class Logger {
     groupId?: string,
   ): void {
     clearInterval(spinner.timer);
-    this.updateLog(message, this.countLines - spinner.line, groupId);
+    this.updateLog(message || '', this.countLines - spinner.line, groupId);
     if (!process.stdout.isTTY) {
       return;
     }
     this.cursorShow();
   }
 
-  private spin(message: string, groupId?: string, line?: number): NodeJS.Timer {
+  private spin(
+    message: string,
+    groupId?: string,
+    line: number = 0,
+  ): NodeJS.Timeout {
     if (!process.stdout.isTTY) {
-      return;
+      return {} as NodeJS.Timeout;
     }
     let i = 0;
     this.cursorHide();
-    return setInterval(() => {
+    return setInterval((): void => {
       const frame = this.frames[(i = ++i % this.frames.length)];
       this.updateLog(
         `${this.getHeader(groupId)}${frame}${message}`,
@@ -86,7 +96,7 @@ export class Logger {
     process.stdout.write('\u001B[?25l');
   }
 
-  private getHeader(groupId: string): string {
+  private getHeader(groupId?: string): string {
     return groupId ? `[${groupId}]: ` : '';
   }
 }

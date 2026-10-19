@@ -1,4 +1,4 @@
 export interface ISpinner {
-  timer: NodeJS.Timer;
+  timer: NodeJS.Timeout;
   line: number;
 }

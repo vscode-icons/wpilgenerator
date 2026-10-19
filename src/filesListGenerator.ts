@@ -1,8 +1,12 @@
+import type { GitClient } from './git-client';
+import type {
+  IFileCollection,
+  IFileExtension,
+  IParsedArgs,
+} from './interfaces';
+import type { Logger } from './logger';
+
 import { BaseGenerator } from './base';
-import { GitClient } from './git-client';
-import { IParsedArgs } from './interfaces';
-import { Logger } from './logger';
-import { IFileCollection, IFileExtension } from './models';
 
 export class FilesListGenerator extends BaseGenerator {
   constructor(
@@ -39,22 +43,18 @@ export class FilesListGenerator extends BaseGenerator {
 
     // Default File Dark Theme
     mdText += this.getName(this.files.default.file);
-    mdText += this.getExtensions(this.files.default.file as IFileExtension);
+    mdText += this.getExtensions(this.files.default.file);
     mdText += this.getDarkThemeImages(this.files.default.file);
-    mdText += this.getLightThemeImages(
-      this.files.default.file_light as IFileExtension,
-    );
+    mdText += this.getLightThemeImages(this.files.default.file_light);
     mdText += this.getLineEnd([], -1);
 
     // Default File Light Theme
     if (this.files.default.file_light) {
       mdText += this.getName(this.files.default.file_light);
-      mdText += this.getExtensions(
-        this.files.default.file_light as IFileExtension,
-      );
+      mdText += this.getExtensions(this.files.default.file_light);
       mdText += this.getDarkThemeImages(this.files.default.file_light);
       mdText += this.getLightThemeImages(
-        this.files.default.file_light as IFileExtension,
+        this.files.default.file_light,
         this.defaultPrefix,
         /* isFolder */ false,
         /* hasLightImage */ true,
@@ -63,16 +63,11 @@ export class FilesListGenerator extends BaseGenerator {
     }
 
     // Supported Files
-    this.files.supported.forEach((file: IFileExtension) => {
+    this.files.supported.forEach((file: IFileExtension): void => {
       mdText += this.getName(file);
       mdText += this.getExtensions(file);
       mdText += this.getDarkThemeImages(file, darkThemePrefix);
-      mdText += this.getLightThemeImages(
-        file,
-        lightThemePrefix,
-        /* isFolder */ false,
-        /* hasLightImage */ file.light,
-      );
+      mdText += this.getLightThemeImages(file, lightThemePrefix);
       mdText += this.getLineEnd([], -1);
     });
 

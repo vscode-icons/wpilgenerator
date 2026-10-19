@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import { exit } from 'process';
 import { Logger } from './logger';
 import { main } from './wpilgenerator';
 
@@ -15,43 +14,54 @@ import { main } from './wpilgenerator';
     }
     const checkFailed = !!checkFn();
     if (checkFailed) {
-      logger.log(message);
+      logger.error(message);
     }
     checkPassed = !checkFailed;
   };
 
   if (pargv.length === 2) {
     doCheck(
-      () => !penv.GH_TOKEN || penv.GH_TOKEN === '',
-      'GitHub token environment variable is not set',
+      (): boolean =>
+        !penv.GH_TOKEN ||
+        penv.GH_TOKEN === '' ||
+        !penv.GITHUB_TOKEN ||
+        penv.GITHUB_TOKEN === '',
+      'Error: GitHub token environment variable is not set',
     );
     doCheck(
-      () => penv.RUNNER_OS !== 'Linux',
-      `Running on '${penv.RUNNER_OS}' is not allowed`,
+      (): boolean => penv.RUNNER_OS !== 'Linux',
+      `Error: Running on '${penv.RUNNER_OS}' is not allowed`,
     );
     doCheck(
-      () =>
+      (): boolean =>
         penv.GITHUB_EVENT_NAME !== 'push' &&
         penv.GITHUB_REF_NAME !== 'workflow_dispatch',
-      `Running on '${penv.GITHUB_EVENT_NAME}' is not allowed`,
+      `Error: Running on '${penv.GITHUB_EVENT_NAME}' is not allowed`,
     );
     doCheck(
-      () => penv.GITHUB_REF_TYPE !== 'branch',
-      `Running on '${penv.GITHUB_REF_TYPE}' is not allowed`,
+      (): boolean => penv.GITHUB_REF_TYPE !== 'branch',
+      `Error: Running on '${penv.GITHUB_REF_TYPE}' is not allowed`,
     );
     doCheck(
-      () =>
+      (): boolean =>
         penv.GITHUB_REF_NAME !== 'master' && penv.GITHUB_REF_NAME !== 'main',
-      `Running on branch '${penv.GITHUB_REF_NAME}' is not allowed`,
+      `Error: Running on branch '${penv.GITHUB_REF_NAME}' is not allowed`,
     );
     doCheck(
-      () => penv.GITHUB_REPOSITORY !== 'vscode-icons/vscode-icons',
-      `Running on '${penv.GITHUB_REPOSITORY}' is not allowed`,
+      (): boolean => penv.GITHUB_REPOSITORY !== 'vscode-icons/vscode-icons',
+      `Error: Running on '${penv.GITHUB_REPOSITORY}' is not allowed`,
     );
     if (!checkPassed) {
-      exit(1);
+      process.exitCode = 1;
+      return;
     }
-    pargv.push('all', '-o', 'repo', '-t', penv.GH_TOKEN);
+    pargv.push(
+      'all',
+      '-o',
+      'repo',
+      '-t',
+      (penv.GH_TOKEN || penv.GITHUB_TOKEN) ?? '',
+    );
   }
   void main();
 })();

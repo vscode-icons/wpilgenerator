@@ -11,9 +11,9 @@ export function combine(
   separator = '.',
 ): string[] {
   return array1.reduce(
-    (previous: string[], current: string) =>
+    (previous: string[], current: string): string[] =>
       previous.concat(
-        array2.map((value: any) => [current, value].join(separator)),
+        array2.map((value: string): string => [current, value].join(separator)),
       ),
     [],
   );
@@ -22,21 +22,18 @@ export function combine(
 export function findDirectorySync(dirName: string): string {
   let dir = path.resolve();
   const root = path.parse(dir).root;
-  let loop = true;
-  while (loop) {
-    let lookUpDir: string;
+  while (true) {
+    let lookupDir: string | undefined;
     try {
       fs.accessSync(path.resolve(dir, dirName));
-      lookUpDir = dirName;
-    } catch (err) {
-      lookUpDir = undefined;
+      lookupDir = dirName;
+    } catch {
+      lookupDir = undefined;
     }
-    if (lookUpDir) {
-      loop = false;
-      return path.join(dir, lookUpDir);
+    if (lookupDir) {
+      return path.join(dir, lookupDir);
     } else if (dir === root) {
-      loop = false;
-      return null;
+      return dir;
     }
     dir = path.dirname(dir);
   }

@@ -1,9 +1,9 @@
 import terser from '@rollup/plugin-terser';
-import ts from '@rollup/plugin-typescript';
 import builtins from 'builtin-modules';
+import esbuild from 'rollup-plugin-esbuild';
 import { preserveShebangs } from 'rollup-plugin-preserve-shebangs';
-import typescript from 'typescript';
-import pkg from './package.json';
+
+import pkg from './package.json' with { type: 'json' };
 
 export default [
   {
@@ -13,19 +13,13 @@ export default [
         dir: '.',
         entryFileNames: pkg.main,
         format: 'cjs',
-      }
+      },
     ],
     external: [
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {}),
       ...builtins,
     ],
-    plugins: [
-      ts({
-        typescript,
-      }),
-      preserveShebangs(),
-      terser()
-    ],
-  }
-]
+    plugins: [esbuild(), preserveShebangs(), terser()],
+  },
+];

@@ -1,8 +1,12 @@
+import type { GitClient } from './git-client';
+import type {
+  IFolderCollection,
+  IFolderExtension,
+  IParsedArgs,
+} from './interfaces';
+import type { Logger } from './logger';
+
 import { BaseGenerator } from './base';
-import { GitClient } from './git-client';
-import { IParsedArgs } from './interfaces';
-import { Logger } from './logger';
-import { IExtension, IFolderCollection, IFolderExtension } from './models';
 
 export class FoldersListGenerator extends BaseGenerator {
   constructor(
@@ -41,14 +45,14 @@ export class FoldersListGenerator extends BaseGenerator {
 
     // Default Folder Dark Theme
     mdText += this.getName(this.folders.default.folder);
-    mdText += this.getExtensions(this.folders.default.folder as IExtension);
+    mdText += this.getExtensions(this.folders.default.folder);
     mdText += this.getDarkThemeImages(
       this.folders.default.folder,
       this.defaultPrefix,
       /* isFolder */ true,
     );
     mdText += this.getLightThemeImages(
-      this.folders.default.folder as IExtension,
+      this.folders.default.folder,
       this.defaultPrefix,
       /* isFolder */ true,
     );
@@ -57,16 +61,14 @@ export class FoldersListGenerator extends BaseGenerator {
     // Default Folder Light Theme
     if (this.folders.default.folder_light) {
       mdText += this.getName(this.folders.default.folder_light);
-      mdText += this.getExtensions(
-        this.folders.default.folder_light as IExtension,
-      );
+      mdText += this.getExtensions(this.folders.default.folder_light);
       mdText += this.getDarkThemeImages(
         this.folders.default.folder_light,
         this.defaultPrefix,
         /* isFolder */ true,
       );
       mdText += this.getLightThemeImages(
-        this.folders.default.folder_light as IExtension,
+        this.folders.default.folder_light,
         this.defaultPrefix,
         /* isFolder */ true,
         /* hasLightImage */ true,
@@ -76,16 +78,14 @@ export class FoldersListGenerator extends BaseGenerator {
 
     // Default Root Folder Dark Theme
     mdText += this.getName(this.folders.default.root_folder);
-    mdText += this.getExtensions(
-      this.folders.default.root_folder as IExtension,
-    );
+    mdText += this.getExtensions(this.folders.default.root_folder);
     mdText += this.getDarkThemeImages(
       this.folders.default.root_folder,
       this.defaultPrefix,
       /* isFolder */ true,
     );
     mdText += this.getLightThemeImages(
-      this.folders.default.root_folder as IExtension,
+      this.folders.default.root_folder,
       this.defaultPrefix,
       /* isFolder */ true,
     );
@@ -94,16 +94,14 @@ export class FoldersListGenerator extends BaseGenerator {
     // Default Root Folder Light Theme
     if (this.folders.default.root_folder_light) {
       mdText += this.getName(this.folders.default.root_folder_light);
-      mdText += this.getExtensions(
-        this.folders.default.root_folder_light as IExtension,
-      );
+      mdText += this.getExtensions(this.folders.default.root_folder_light);
       mdText += this.getDarkThemeImages(
         this.folders.default.root_folder_light,
         this.defaultPrefix,
         /* isFolder */ true,
       );
       mdText += this.getLightThemeImages(
-        this.folders.default.root_folder_light as IExtension,
+        this.folders.default.root_folder_light,
         this.defaultPrefix,
         /* isFolder */ true,
         /* hasLightImage */ true,
@@ -112,7 +110,7 @@ export class FoldersListGenerator extends BaseGenerator {
     }
 
     // Supported Folders
-    this.folders.supported.forEach((folder: IFolderExtension) => {
+    this.folders.supported.forEach((folder: IFolderExtension): void => {
       mdText += this.getName(folder);
       mdText += this.getExtensions(folder);
       mdText += this.getDarkThemeImages(

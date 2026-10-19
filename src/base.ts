@@ -1,40 +1,45 @@
+import type http from 'http';
+
+import type { GitClient } from './git-client';
+import type { Logger } from './logger';
+
 import fs from 'fs';
-import http from 'http';
 import https from 'https';
 import url from 'url';
-import { GitClient } from './git-client';
-import { IParsedArgs, IResult, ISpinner } from './interfaces';
-import { Logger } from './logger';
-import * as models from './models';
-import { ILanguage } from './models/language';
+
+import * as models from './interfaces';
 import * as utils from './utils';
 
 export abstract class BaseGenerator {
   public readonly defaultPrefix = 'default_';
 
+  protected logger: Logger;
+  protected logGroupId: string;
   protected readonly imagesUrl: string;
   protected readonly wikiUrl: string;
 
   constructor(
     private wikiPageFilename: string,
     private repoFilename: string,
-    private pargs: IParsedArgs,
+    private pargs: models.IParsedArgs,
     private gitClient: GitClient,
-    protected logger: Logger,
-    protected logGroupId: string,
+    logger: Logger,
+    logGroupId: string,
   ) {
+    this.logger = logger;
+    this.logGroupId = logGroupId;
     this.imagesUrl = `https://github.com/${pargs.account}/vscode-icons/blob/master/icons/`;
     this.wikiUrl = `https://raw.githubusercontent.com/wiki/${pargs.account}/vscode-icons`;
   }
 
-  public async generate(): Promise<IResult> {
+  public async generate(): Promise<models.IResult> {
     const wikiPageContent = await this.getWikiPage();
     const createdList = this.createList();
 
     const hasChanged = this.compareLists(wikiPageContent, createdList);
 
     if (this.pargs.output === 'repo' && !hasChanged) {
-      return;
+      return { filename: this.wikiPageFilename, content: wikiPageContent };
     }
 
     const newWikiPage = this.createNewWikiPage(wikiPageContent, createdList);
@@ -46,7 +51,7 @@ export abstract class BaseGenerator {
 
   public getHeaders(list: string[]): string {
     let text = '';
-    list.forEach((element: string, index: number) => {
+    list.forEach((element: string, index: number): void => {
       text += `| ${element} ${this.getLineEnd(list, index)}`;
     });
 
@@ -57,7 +62,7 @@ export abstract class BaseGenerator {
     return text;
   }
 
-  public getName(extension: models.IDefaultExtension): string {
+  public getName(extension?: models.IDefaultExtension): string {
     let text = '| ';
     if (!extension) {
       return text;
@@ -68,22 +73,20 @@ export abstract class BaseGenerator {
     return text;
   }
 
-  public getExtensions(extension: models.IExtension): string {
+  public getExtensions(fileExtension?: models.IDefaultExtension): string {
     let text = '| ';
 
-    if (!extension) {
+    if (!fileExtension) {
       return text;
     }
 
     text += this.pargs.useSmallFonts ? '<sub>' : '';
 
-    let hasEntries = false;
-    const fileExtension = extension as models.IFileExtension;
-
-    if (extension.extensions) {
-      const isFilename =
-        fileExtension.filename !== undefined && fileExtension.filename;
-      if (!isFilename) {
+    if (this.isFileExtension(fileExtension)) {
+      if (fileExtension.filename) {
+        // filenames
+        text += this.getFilenames(fileExtension);
+      } else {
         const populateFn = (
           ext: string,
           index: number,
@@ -94,15 +97,15 @@ export abstract class BaseGenerator {
           }`);
 
         // extensions
-        extension.extensions.forEach((ext: string, index: number) =>
-          populateFn(ext, index, extension.extensions),
+        fileExtension.extensions.forEach((ext: string, index: number): string =>
+          populateFn(ext, index, fileExtension.extensions),
         );
 
         // filenamesGlobs and extensionGlobs
         const hasGlobDefinitions: boolean =
-          fileExtension.filenamesGlob &&
-          fileExtension.filenamesGlob.length &&
-          fileExtension.extensionsGlob &&
+          !!fileExtension.filenamesGlob &&
+          !!fileExtension.filenamesGlob.length &&
+          !!fileExtension.extensionsGlob &&
           !!fileExtension.extensionsGlob.length;
 
         if (hasGlobDefinitions) {
@@ -112,22 +115,23 @@ export abstract class BaseGenerator {
             : text.replace(/\s*$/, ', ');
 
           utils
-            .combine(fileExtension.filenamesGlob, fileExtension.extensionsGlob)
-            .forEach((ext, index, extensions) =>
+            .combine(
+              fileExtension.filenamesGlob!,
+              fileExtension.extensionsGlob!,
+            )
+            .forEach((ext, index, extensions): string =>
               populateFn(ext, index, extensions),
             );
         }
-      } else {
-        // filenames
-        text += this.getFilenames(fileExtension);
       }
-      hasEntries = !!extension.extensions.length;
-    }
 
-    if (fileExtension.languages && fileExtension.languages.length) {
-      // In case there are extensions entries already
-      text = hasEntries ? text.replace(/\s*$/, ', ') : text;
-      text += this.getLanguageIds(fileExtension);
+      if (fileExtension.languages && fileExtension.languages.length) {
+        // In case there are extensions entries already
+        text = fileExtension.extensions.length
+          ? text.replace(/\s*$/, ', ')
+          : text;
+        text += this.getLanguageIds(fileExtension);
+      }
     }
 
     text = this.pargs.useSmallFonts ? text.replace(/\s*$/, '</sub> ') : text;
@@ -136,8 +140,8 @@ export abstract class BaseGenerator {
   }
 
   public getDarkThemeImages(
-    extension: models.IDefaultExtension,
-    extensionPrefix?: string,
+    extension?: models.IDefaultExtension,
+    extensionPrefix: string = this.defaultPrefix,
     isFolder = false,
   ): string {
     let text = '| ';
@@ -146,7 +150,7 @@ export abstract class BaseGenerator {
       return text;
     }
 
-    const prefix = extensionPrefix || this.defaultPrefix;
+    extension.format ??= models.FileFormat.svg;
 
     const fileExtension =
       typeof extension.format === 'string'
@@ -157,21 +161,21 @@ export abstract class BaseGenerator {
     text +=
       `![${extension.icon}_dark${isFolder ? '_closed' : ''}](${
         this.imagesUrl
-      }` + `${prefix}${extension.icon}.${fileExtension}) `;
+      }` + `${extensionPrefix}${extension.icon}.${fileExtension}) `;
 
     if (isFolder) {
       // dark theme (opened)
       text +=
         `| ![${extension.icon}_dark_opened](${this.imagesUrl}` +
-        `${prefix}${extension.icon}_opened.${fileExtension}) `;
+        `${extensionPrefix}${extension.icon}_opened.${fileExtension}) `;
     }
 
     return text;
   }
 
   public getLightThemeImages(
-    extension: models.IExtension,
-    extensionPrefix?: string,
+    extension?: models.IDefaultExtension,
+    extensionPrefix: string = this.defaultPrefix,
     isFolder = false,
     hasLightImage = false,
   ): string {
@@ -181,35 +185,41 @@ export abstract class BaseGenerator {
       return text;
     }
 
-    const prefix = extensionPrefix || this.defaultPrefix;
+    extension.format ??= models.FileFormat.svg;
 
-    if (extension.light || hasLightImage) {
-      const fileExtension =
-        typeof extension.format === 'string'
-          ? extension.format
-          : models.FileFormat[extension.format];
+    if (
+      !this.isFileExtension(extension) ||
+      (!extension.light && !hasLightImage)
+    ) {
+      return isFolder ? `${text}| ` : text;
+    }
 
-      // light theme (closed)
+    const fileExtension =
+      typeof extension.format === 'string'
+        ? extension.format
+        : models.FileFormat[extension.format];
+
+    // light theme (closed)
+    text +=
+      `![${extension.icon}_light${isFolder ? '_closed' : ''}](${this.imagesUrl}` +
+      `${extensionPrefix}${extension.icon}.${fileExtension}) `;
+
+    if (isFolder) {
+      // light theme (opened)
       text +=
-        `![${extension.icon}_light${isFolder ? '_closed' : ''}](${
-          this.imagesUrl
-        }` + `${prefix}${extension.icon}.${fileExtension}) `;
-
-      if (isFolder) {
-        // light theme (opened)
-        text +=
-          `| ![${extension.icon}_light_opened](${this.imagesUrl}` +
-          `${prefix}${extension.icon}_opened.${fileExtension}) `;
-      }
-    } else {
-      text += '| ';
+        `| ![${extension.icon}_light_opened](${this.imagesUrl}` +
+        `${extensionPrefix}${extension.icon}_opened.${fileExtension}) `;
     }
 
     return text;
   }
 
-  public getLineEnd(list: any[], index: number): string {
+  public getLineEnd(list: string[], index: number): string {
     return index === list.length - 1 ? '|\n' : '';
+  }
+
+  private isFileExtension(value: unknown): value is models.IFileExtension {
+    return typeof value === 'object' && value !== null && 'extensions' in value;
   }
 
   private normalize(text: string): string {
@@ -244,20 +254,14 @@ export abstract class BaseGenerator {
   private createNewWikiPage(wikiPage: string, newList: string): string {
     try {
       this.logger.log('Starting new wiki page creation', this.logGroupId);
-      this.logger.log('');
       const newWikiPage = wikiPage.replace(
         this.getReplaceText(wikiPage),
         newList,
       );
       this.logger.updateLog('New wiki page created', this.logGroupId);
-      this.logger.log('');
       return newWikiPage;
     } catch (e) {
-      throw new Error(
-        `Failed creating new wiki page with reason: ${(
-          e as Error
-        )?.toString()}`,
-      );
+      throw new Error('Failed creating new wiki page', { cause: e });
     }
   }
 
@@ -268,15 +272,15 @@ export abstract class BaseGenerator {
       (text += `**${ext}**${index === list.length - 1 ? ' ' : ', '}`);
 
     // extensions as filenames
-    extension.extensions.forEach((ext, index) =>
+    extension.extensions.forEach((ext, index): string =>
       populateFn(ext, index, extension.extensions),
     );
 
     // filenamesGlobs and extensionGlobs
     const hasGlobDefinitions: boolean =
-      extension.filenamesGlob &&
-      extension.filenamesGlob.length &&
-      extension.extensionsGlob &&
+      !!extension.filenamesGlob &&
+      !!extension.filenamesGlob.length &&
+      !!extension.extensionsGlob &&
       !!extension.extensionsGlob.length;
 
     if (!hasGlobDefinitions) {
@@ -287,8 +291,10 @@ export abstract class BaseGenerator {
     text = text !== '' ? text.replace(/\s*$/, ', ') : text;
 
     utils
-      .combine(extension.filenamesGlob, extension.extensionsGlob)
-      .forEach((ext, index, extensions) => populateFn(ext, index, extensions));
+      .combine(extension.filenamesGlob!, extension.extensionsGlob!)
+      .forEach((ext, index, extensions): string =>
+        populateFn(ext, index, extensions),
+      );
 
     return text;
   }
@@ -299,18 +305,23 @@ export abstract class BaseGenerator {
     const populateFn = (
       langIds: string,
       index: number,
-      list: string[] | ILanguage[],
+      list: string[] | models.ILanguage[],
     ): string =>
       (text += `\`${langIds}\`${index === list.length - 1 ? ' ' : ', '}`);
 
-    extension.languages.forEach((lang, index) => {
+    if (!extension.languages || !extension.languages.length) {
+      return text;
+    }
+
+    extension.languages.forEach((lang, index): void => {
       if (Array.isArray(lang.ids)) {
-        lang.ids.forEach((langId: string, lIndex: number, list: string[]) =>
-          populateFn(langId, lIndex, list),
+        lang.ids.forEach(
+          (langId: string, lIndex: number, list: string[]): string =>
+            populateFn(langId, lIndex, list),
         );
         return;
       }
-      populateFn(lang.ids, index, extension.languages);
+      populateFn(lang.ids, index, extension.languages!);
     });
 
     return text;
@@ -333,7 +344,7 @@ export abstract class BaseGenerator {
   }
 
   private getWikiPage(): Promise<string> {
-    return new Promise((res, rej) => {
+    return new Promise((res, rej): void => {
       if (this.pargs.output === 'repo') {
         try {
           const filePath = utils.pathUnixJoin(
@@ -349,27 +360,27 @@ export abstract class BaseGenerator {
           );
           const str = fs.readFileSync(filePath).toString();
           return res(str);
-        } catch (e) {
-          return rej(e);
+        } catch (e: unknown) {
+          return rej(e instanceof Error ? e : new Error(String(e)));
         }
       }
 
       const uri = `${this.wikiUrl}/${this.wikiPageFilename}`;
 
-      const spinner: ISpinner = this.logger.spinnerLogStart(
+      const spinner: models.ISpinner = this.logger.spinnerLogStart(
         `Requesting wiki page from: ${uri}`,
         this.logGroupId,
       );
 
       const response = (resp: http.IncomingMessage): void => {
-        const body = [];
+        const body: Uint8Array[] = [];
         resp
-          .on('error', (err: Error) => {
+          .on('error', (err: Error): void => {
             clearInterval(spinner.timer);
-            rej(err.stack);
+            rej(new Error(err.stack ?? err.message));
           })
-          .on('data', (chunk: any) => body.push(chunk))
-          .on('end', () => {
+          .on('data', (chunk: Uint8Array): number => body.push(chunk))
+          .on('end', (): void => {
             this.logger.spinnerLogStop(
               spinner,
               'Wiki page received',
@@ -379,7 +390,9 @@ export abstract class BaseGenerator {
           });
 
         if (resp.statusCode !== 200) {
-          return rej(resp.statusMessage);
+          return rej(
+            new Error(resp.statusMessage ?? `HTTP status ${resp.statusCode}`),
+          );
         }
       };
       const options: https.RequestOptions = url.parse(uri);
@@ -410,7 +423,7 @@ export abstract class BaseGenerator {
     this.logger.updateLog('Comparing lists', this.logGroupId);
 
     const hasChanged = !newIconsList.every(
-      (value, index) => value === currentIconsList[index],
+      (value, index): boolean => value === currentIconsList[index],
     );
 
     this.logger.updateLog(

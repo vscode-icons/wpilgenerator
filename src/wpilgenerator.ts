@@ -1,8 +1,8 @@
+import type { IFileCollection, IFolderCollection, IResult } from './interfaces';
+
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';
-import { IResult } from './interfaces';
 import { Logger } from './logger';
-import { IFileCollection, IFolderCollection } from './models';
 import { SimpleGitClient } from './simplegit-client';
 import { findDirectorySync, findFileSync } from './utils';
 import { YargsParser } from './yargsParser';
@@ -65,7 +65,7 @@ export async function main(): Promise<void> {
             logger,
           ).generate(),
         ]);
-        results = results.filter((res: IResult) => res);
+        results = results.filter((res: IResult): boolean => !!res);
         break;
       }
       case 'files': {
@@ -94,10 +94,10 @@ export async function main(): Promise<void> {
       }
     }
 
-    let hasCommit: boolean;
+    let hasCommit = false;
     if (results) {
       await Promise.all(
-        results.map(async (result: IResult) => {
+        results.map(async (result: IResult): Promise<void> => {
           hasCommit ||= await gitClient.tryCommitToWikiRepo(
             result.filename,
             result.content,
@@ -113,7 +113,8 @@ export async function main(): Promise<void> {
     logger.log('Finished');
   } catch (e) {
     const error = e instanceof Error ? e : new Error(e as string);
-    logger.error(error.stack);
-    process.exit(1);
+    logger.error(error.stack ?? error.message);
+    process.exitCode = 1;
+    return;
   }
 }

@@ -1,13 +1,17 @@
-import y from 'yargs';
-import { IParsedArgs } from './interfaces';
-import { Logger } from './logger';
+import type { Arguments, Options } from 'yargs';
+
+import type { IParsedArgs } from './interfaces';
+import type { Logger } from './logger';
+
+import yargs from 'yargs';
 
 export class YargsParser {
   private readonly allowedOutputs = ['file', 'repo'];
   private readonly defaultAccount = 'vscode-icons';
+  private readonly yargs = yargs(process.argv.slice(2));
 
   constructor(private logger: Logger) {
-    const options: { [key: string]: y.Options } = {
+    const options: { [key: string]: Options } = {
       out: {
         alias: 'o',
         description: 'The output type',
@@ -30,7 +34,8 @@ export class YargsParser {
       },
     };
 
-    y.usage('Usage: $0 <command> [options]')
+    this.yargs
+      .usage('Usage: $0 <command> [options]')
       .command(
         'all',
         'Generates the list of files and list of folders wiki page',
@@ -45,12 +50,12 @@ export class YargsParser {
       .alias('help', 'h')
       .version()
       .alias('version', 'V')
-      .check((argv: y.Arguments) => this.validate(argv))
+      .check((argv: Arguments): boolean => this.validate(argv))
       .strict();
   }
 
   public async parse(): Promise<IParsedArgs> {
-    const pargs = await y.parse(process.argv.splice(2));
+    const pargs = await this.yargs.parse();
     return {
       command: pargs._[0] as string,
       account: pargs.account as string,
@@ -59,9 +64,9 @@ export class YargsParser {
     };
   }
 
-  private validate(pargs: y.Arguments): boolean {
+  private validate(pargs: Arguments): boolean {
     if (pargs.out === 'repo' && !pargs.token) {
-      y.showHelp();
+      this.yargs.showHelp();
       this.logger.error(`No token provided`);
       process.exit(1);
     }

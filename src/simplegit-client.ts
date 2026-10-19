@@ -1,25 +1,37 @@
-import fs from 'fs';
-import {
+import type {
   CommitResult,
   Options,
   RemoteWithRefs,
   SimpleGit,
   TaskOptions,
-  simpleGit,
 } from 'simple-git';
+
+import type { IParsedArgs, ISpinner } from './interfaces';
+import type { Logger } from './logger';
+
+import fs from 'fs';
 import { clearInterval } from 'timers';
+
+import { simpleGit } from 'simple-git';
+
 import { GitClient } from './git-client';
-import { IParsedArgs, ISpinner } from './interfaces';
-import { Logger } from './logger';
 import { Mutex } from './mutex';
 
 export class SimpleGitClient extends GitClient {
   private mutex: Mutex;
-  private wikiRepo: SimpleGit;
+  private wikiRepo: SimpleGit | undefined;
 
   constructor(pargs: IParsedArgs, logger: Logger) {
     super(pargs, logger);
     this.mutex = new Mutex();
+
+    // if (!fs.existsSync(this.wikiRepoFolder)) {
+    //   throw new Error(
+    //     'The wiki repository folder does not exist, try cloning it first.',
+    //   );
+    // }
+
+    // this.wikiRepo = simpleGit(this.wikiRepoFolder);
   }
 
   public async getCodeRepository(): Promise<void> {
@@ -46,11 +58,19 @@ export class SimpleGitClient extends GitClient {
     content: string,
   ): Promise<boolean> {
     if (this.pargs.output !== 'repo' || !content) {
-      return;
+      return false;
     }
 
+    // attempt to get the wiki repository
+    // if it hasn't been initialized yet
     if (!this.wikiRepo) {
       await this.getWikiRepository();
+    }
+
+    // if it still hasn't been initialized,
+    // return false
+    if (!this.wikiRepo) {
+      return false;
     }
 
     return this.commit(this.wikiRepo, filename);
@@ -61,8 +81,16 @@ export class SimpleGitClient extends GitClient {
       return;
     }
 
+    // attempt to get the wiki repository
+    // if it hasn't been initialized yet
     if (!this.wikiRepo) {
       await this.getWikiRepository();
+    }
+
+    // if it still hasn't been initialized,
+    // return
+    if (!this.wikiRepo) {
+      return;
     }
 
     const remote: RemoteWithRefs = await this.addRemote(
@@ -98,6 +126,7 @@ export class SimpleGitClient extends GitClient {
       this.logGroupId,
     );
     try {
+      const repo = simpleGit(repoFolder);
       await simpleGit()
         .clone(url, repoFolder, depth ? { '--depth': depth } : [])
         .cwd(repoFolder);
@@ -106,7 +135,6 @@ export class SimpleGitClient extends GitClient {
         message.replace('Cloning', 'Cloned'),
         this.logGroupId,
       );
-      const repo = simpleGit(repoFolder);
       return repo;
     } catch (e) {
       clearInterval(spinner.timer);
@@ -121,7 +149,7 @@ export class SimpleGitClient extends GitClient {
     );
 
     try {
-      const matches: RegExpMatchArray = /files|folders/i.exec(filename);
+      const matches: RegExpMatchArray | null = /files|folders/i.exec(filename);
       const name = matches && matches[0];
       if (!name) {
         throw new Error('Can not determine list name');
@@ -165,13 +193,13 @@ export class SimpleGitClient extends GitClient {
     name: string,
     url: string,
   ): Promise<RemoteWithRefs> {
-    const remote: string = await repo.listRemote(['--get-url', name]);
-    if (remote) {
+    const remoteRepo: string = await repo.listRemote(['--get-url', name]);
+    if (remoteRepo) {
       await repo.removeRemote(name);
     }
     await repo.addRemote(name, url);
     return (await repo.getRemotes(true)).filter(
-      (r: RemoteWithRefs) => r.name === name,
+      (remote: RemoteWithRefs): boolean => remote.name === name,
     )[0];
   }
 
@@ -185,7 +213,7 @@ export class SimpleGitClient extends GitClient {
       `Pushing ${numOfCommits} commit${suffix} to: ${remote.name}`,
       this.logGroupId,
     );
-    const timer = setTimeout(() => {
+    const timer = setTimeout((): void => {
       clearInterval(spinner.timer);
       throw new Error('Timeout on push action');
     }, 60000);
@@ -211,7 +239,7 @@ export class SimpleGitClient extends GitClient {
     }
   }
 
-  private async setCredentials(repo: SimpleGit) {
+  private async setCredentials(repo: SimpleGit): Promise<void> {
     await repo.addConfig('credential.username', this.pargs.account);
     await repo.addConfig(
       'credential.helper',

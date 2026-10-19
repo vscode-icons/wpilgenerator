@@ -1,5 +1,6 @@
-import { IParsedArgs } from './interfaces';
-import { Logger } from './logger';
+import type { IParsedArgs } from './interfaces';
+import type { Logger } from './logger';
+
 import { findDirectorySync, pathUnixJoin } from './utils';
 
 export abstract class GitClient {
@@ -10,11 +11,12 @@ export abstract class GitClient {
   protected readonly wikiRepoUrl: string;
   protected readonly codeRepoFolder: string;
   protected readonly logGroupId: string;
+  protected logger: Logger;
+  protected pargs: IParsedArgs;
 
-  constructor(
-    protected pargs: IParsedArgs,
-    protected logger: Logger,
-  ) {
+  constructor(pargs: IParsedArgs, logger: Logger) {
+    this.logger = logger;
+    this.pargs = pargs;
     this.codeRepoUrl = `https://github.com/${this.pargs.account}/vscode-icons`;
     this.wikiRepoUrl = `${this.codeRepoUrl}.wiki`;
     this.dirname = pathUnixJoin(findDirectorySync('vscode-icons'), './../../');
