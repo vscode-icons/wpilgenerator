@@ -51,13 +51,7 @@ import { main } from './wpilgenerator';
       process.exitCode = 1;
       return;
     }
-    pargv.push(
-      'all',
-      '-o',
-      'repo',
-      '-t',
-      (penv.GH_TOKEN || penv.GITHUB_TOKEN) ?? '',
-    );
+    pargv.push('all', '-o', 'repo', '-t', penv.GH_TOKEN ?? '');
   }
   void main();
 })();

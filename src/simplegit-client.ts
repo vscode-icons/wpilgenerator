@@ -24,14 +24,6 @@ export class SimpleGitClient extends GitClient {
   constructor(pargs: IParsedArgs, logger: Logger) {
     super(pargs, logger);
     this.mutex = new Mutex();
-
-    // if (!fs.existsSync(this.wikiRepoFolder)) {
-    //   throw new Error(
-    //     'The wiki repository folder does not exist, try cloning it first.',
-    //   );
-    // }
-
-    // this.wikiRepo = simpleGit(this.wikiRepoFolder);
   }
 
   public async getCodeRepository(): Promise<void> {
@@ -126,7 +118,7 @@ export class SimpleGitClient extends GitClient {
       this.logGroupId,
     );
     try {
-      const repo = simpleGit(repoFolder);
+      const repo = simpleGit();
       await simpleGit()
         .clone(url, repoFolder, depth ? { '--depth': depth } : [])
         .cwd(repoFolder);
