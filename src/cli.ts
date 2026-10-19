@@ -21,11 +21,7 @@ import { main } from './wpilgenerator';
 
   if (pargv.length === 2) {
     doCheck(
-      (): boolean =>
-        !penv.GH_TOKEN ||
-        penv.GH_TOKEN === '' ||
-        !penv.GITHUB_TOKEN ||
-        penv.GITHUB_TOKEN === '',
+      (): boolean => !penv.GH_TOKEN || penv.GH_TOKEN === '',
       'Error: GitHub token environment variable is not set',
     );
     doCheck(
