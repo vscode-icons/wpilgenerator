@@ -118,16 +118,17 @@ export class SimpleGitClient extends GitClient {
       this.logGroupId,
     );
     try {
-      const repo = simpleGit();
-      await simpleGit()
-        .clone(url, repoFolder, depth ? { '--depth': depth } : [])
-        .cwd(repoFolder);
+      await simpleGit().clone(
+        url,
+        repoFolder,
+        depth ? { '--depth': depth } : [],
+      );
       this.logger.spinnerLogStop(
         spinner,
         message.replace('Cloning', 'Cloned'),
         this.logGroupId,
       );
-      return repo;
+      return simpleGit(repoFolder);
     } catch (e) {
       clearInterval(spinner.timer);
       throw e;
