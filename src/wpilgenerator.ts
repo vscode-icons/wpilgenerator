@@ -1,4 +1,4 @@
-import type { IFileCollection, IFolderCollection, IResult } from './interfaces';
+import type { IFileCollection, IFolderCollection, IResult } from './types';
 
 import { FilesListGenerator } from './filesListGenerator';
 import { FoldersListGenerator } from './foldersListGenerator';

@@ -7,8 +7,8 @@ import type {
   TaskOptions,
 } from 'simple-git';
 
-import type { IParsedArgs, ISpinner } from './interfaces';
 import type { Logger } from './logger';
+import type { IParsedArgs, ISpinner } from './types';
 
 import fs from 'fs';
 import { clearInterval } from 'timers';

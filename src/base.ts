@@ -7,7 +7,7 @@ import fs from 'fs';
 import https from 'https';
 import url from 'url';
 
-import * as models from './interfaces';
+import * as types from './types';
 import * as utils from './utils';
 
 export abstract class BaseGenerator {
@@ -21,7 +21,7 @@ export abstract class BaseGenerator {
   constructor(
     private wikiPageFilename: string,
     private repoFilename: string,
-    private pargs: models.IParsedArgs,
+    private pargs: types.IParsedArgs,
     private gitClient: GitClient,
     logger: Logger,
     logGroupId: string,
@@ -32,7 +32,7 @@ export abstract class BaseGenerator {
     this.wikiUrl = `https://raw.githubusercontent.com/wiki/${pargs.account}/vscode-icons`;
   }
 
-  public async generate(): Promise<models.IResult> {
+  public async generate(): Promise<types.IResult> {
     const wikiPageContent = await this.getWikiPage();
     const createdList = this.createList();
 
@@ -62,7 +62,7 @@ export abstract class BaseGenerator {
     return text;
   }
 
-  public getName(extension?: models.IDefaultExtension): string {
+  public getName(extension?: types.IDefaultExtension): string {
     let text = '| ';
     if (!extension) {
       return text;
@@ -73,7 +73,7 @@ export abstract class BaseGenerator {
     return text;
   }
 
-  public getExtensions(fileExtension?: models.IDefaultExtension): string {
+  public getExtensions(fileExtension?: types.IDefaultExtension): string {
     let text = '| ';
 
     if (!fileExtension) {
@@ -140,7 +140,7 @@ export abstract class BaseGenerator {
   }
 
   public getDarkThemeImages(
-    extension?: models.IDefaultExtension,
+    extension?: types.IDefaultExtension,
     extensionPrefix: string = this.defaultPrefix,
     isFolder = false,
   ): string {
@@ -150,12 +150,12 @@ export abstract class BaseGenerator {
       return text;
     }
 
-    extension.format ??= models.FileFormat.svg;
+    extension.format ??= types.FileFormat.svg;
 
     const fileExtension =
       typeof extension.format === 'string'
         ? extension.format
-        : models.FileFormat[extension.format];
+        : types.FileFormat[extension.format];
 
     // dark theme (closed)
     text +=
@@ -174,7 +174,7 @@ export abstract class BaseGenerator {
   }
 
   public getLightThemeImages(
-    extension?: models.IDefaultExtension,
+    extension?: types.IDefaultExtension,
     extensionPrefix: string = this.defaultPrefix,
     isFolder = false,
     hasLightImage = false,
@@ -185,7 +185,7 @@ export abstract class BaseGenerator {
       return text;
     }
 
-    extension.format ??= models.FileFormat.svg;
+    extension.format ??= types.FileFormat.svg;
 
     if (
       !this.isFileExtension(extension) ||
@@ -197,7 +197,7 @@ export abstract class BaseGenerator {
     const fileExtension =
       typeof extension.format === 'string'
         ? extension.format
-        : models.FileFormat[extension.format];
+        : types.FileFormat[extension.format];
 
     // light theme (closed)
     text +=
@@ -218,7 +218,7 @@ export abstract class BaseGenerator {
     return index === list.length - 1 ? '|\n' : '';
   }
 
-  private isFileExtension(value: unknown): value is models.IFileExtension {
+  private isFileExtension(value: unknown): value is types.IFileExtension {
     return typeof value === 'object' && value !== null && 'extensions' in value;
   }
 
@@ -265,7 +265,7 @@ export abstract class BaseGenerator {
     }
   }
 
-  private getFilenames(extension: models.IFileExtension): string {
+  private getFilenames(extension: types.IFileExtension): string {
     let text = '';
 
     const populateFn = (ext: string, index: number, list: string[]): string =>
@@ -299,13 +299,13 @@ export abstract class BaseGenerator {
     return text;
   }
 
-  private getLanguageIds(extension: models.IFileExtension): string {
+  private getLanguageIds(extension: types.IFileExtension): string {
     let text = '';
 
     const populateFn = (
       langIds: string,
       index: number,
-      list: string[] | models.ILanguage[],
+      list: string[] | types.ILanguage[],
     ): string =>
       (text += `\`${langIds}\`${index === list.length - 1 ? ' ' : ', '}`);
 
@@ -367,7 +367,7 @@ export abstract class BaseGenerator {
 
       const uri = `${this.wikiUrl}/${this.wikiPageFilename}`;
 
-      const spinner: models.ISpinner = this.logger.spinnerLogStart(
+      const spinner: types.ISpinner = this.logger.spinnerLogStart(
         `Requesting wiki page from: ${uri}`,
         this.logGroupId,
       );

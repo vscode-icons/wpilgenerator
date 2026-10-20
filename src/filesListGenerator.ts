@@ -1,10 +1,6 @@
 import type { GitClient } from './git-client';
-import type {
-  IFileCollection,
-  IFileExtension,
-  IParsedArgs,
-} from './interfaces';
 import type { Logger } from './logger';
+import type { IFileCollection, IFileExtension, IParsedArgs } from './types';
 
 import { BaseGenerator } from './base';
 

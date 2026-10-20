@@ -1,5 +1,5 @@
-import type { IParsedArgs } from './interfaces';
 import type { Logger } from './logger';
+import type { IParsedArgs } from './types';
 
 import { findDirectorySync, pathUnixJoin } from './utils';
 

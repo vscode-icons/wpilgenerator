@@ -1,7 +1,7 @@
 import type { Arguments, Options } from 'yargs';
 
-import type { IParsedArgs } from './interfaces';
 import type { Logger } from './logger';
+import type { IParsedArgs } from './types';
 
 import yargs from 'yargs';
 

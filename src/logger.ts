@@ -1,4 +1,4 @@
-import type { ISpinner } from './interfaces';
+import type { ISpinner } from './types';
 
 import { clearLine, cursorTo, moveCursor } from 'readline';
 import { styleText } from 'util';
