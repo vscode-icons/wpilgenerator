@@ -1,7 +1,7 @@
 {
   "name": "wpilgenerator",
   "description": "A custom generator to produce and publish list of icons to the vscode-icons wiki",
-  "version": "0.13.5",
+  "version": "1.0.0",
   "license": "MIT",
   "author": {
     "email": "jimikar@gmail.com",
@@ -17,7 +17,7 @@
   "engines": {
     "node": ">=22.*"
   },
-  "type":"module",
+  "type": "module",
   "main": "lib/wpilgen.js",
   "bin": {
     "wpilgen": "lib/wpilgen.js"
