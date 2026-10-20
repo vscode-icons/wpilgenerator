@@ -1,11 +1,15 @@
-import type { IFileCollection, IFolderCollection, IResult } from './types';
+import type {
+  IFileCollection,
+  IFolderCollection,
+  IResult,
+} from './types/index.ts';
 
-import { FilesListGenerator } from './filesListGenerator';
-import { FoldersListGenerator } from './foldersListGenerator';
-import { Logger } from './logger';
-import { SimpleGitClient } from './simplegit-client';
-import { findDirectorySync, findFileSync } from './utils';
-import { YargsParser } from './yargsParser';
+import { FilesListGenerator } from './filesListGenerator.ts';
+import { FoldersListGenerator } from './foldersListGenerator.ts';
+import { Logger } from './logger.ts';
+import { SimpleGitClient } from './simplegit-client.ts';
+import { findDirectorySync, findFileSync } from './utils.ts';
+import { YargsParser } from './yargsParser.ts';
 
 export async function main(): Promise<void> {
   const logger = new Logger();

@@ -1,8 +1,12 @@
-import type { GitClient } from './git-client';
-import type { Logger } from './logger';
-import type { IFileCollection, IFileExtension, IParsedArgs } from './types';
+import type { GitClient } from './git-client.ts';
+import type { Logger } from './logger.ts';
+import type {
+  IFileCollection,
+  IFileExtension,
+  IParsedArgs,
+} from './types/index.ts';
 
-import { BaseGenerator } from './base';
+import { BaseGenerator } from './base.ts';
 
 export class FilesListGenerator extends BaseGenerator {
   constructor(

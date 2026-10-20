@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { Logger } from './logger';
-import { main } from './wpilgenerator';
+import { Logger } from './logger.ts';
+import { main } from './wpilgenerator.ts';
 
 ((): void => {
   const logger = new Logger();

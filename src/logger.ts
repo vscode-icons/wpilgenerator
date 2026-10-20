@@ -1,7 +1,7 @@
-import type { ISpinner } from './types';
+import type { ISpinner } from './types/index.ts';
 
-import { clearLine, cursorTo, moveCursor } from 'readline';
-import { styleText } from 'util';
+import { clearLine, cursorTo, moveCursor } from 'node:readline';
+import { styleText } from 'node:util';
 
 export class Logger {
   private frames = ['- ', '\\ ', '| ', '/ '];

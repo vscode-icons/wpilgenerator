@@ -1,14 +1,14 @@
-import type http from 'http';
+import type http from 'node:http';
 
-import type { GitClient } from './git-client';
-import type { Logger } from './logger';
+import type { GitClient } from './git-client.ts';
+import type { Logger } from './logger.ts';
 
-import fs from 'fs';
-import https from 'https';
-import url from 'url';
+import fs from 'node:fs';
+import https from 'node:https';
+import url from 'node:url';
 
-import * as types from './types';
-import * as utils from './utils';
+import * as types from './types/index.ts';
+import * as utils from './utils.ts';
 
 export abstract class BaseGenerator {
   public readonly defaultPrefix = 'default_';

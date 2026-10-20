@@ -7,16 +7,16 @@ import type {
   TaskOptions,
 } from 'simple-git';
 
-import type { Logger } from './logger';
-import type { IParsedArgs, ISpinner } from './types';
+import type { Logger } from './logger.ts';
+import type { IParsedArgs, ISpinner } from './types/index.ts';
 
-import fs from 'fs';
-import { clearInterval } from 'timers';
+import fs from 'node:fs';
+import { clearInterval } from 'node:timers';
 
 import { simpleGit } from 'simple-git';
 
-import { GitClient } from './git-client';
-import { Mutex } from './mutex';
+import { GitClient } from './git-client.ts';
+import { Mutex } from './mutex.ts';
 
 const gitOptions: Partial<SimpleGitOptions> = {
   unsafe: { allowUnsafeCredentialHelper: true },

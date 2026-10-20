@@ -12,7 +12,7 @@ export default [
       {
         dir: '.',
         entryFileNames: pkg.main,
-        format: 'cjs',
+        format: 'es',
       },
     ],
     external: [
@@ -20,6 +20,6 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
       ...builtins,
     ],
-    plugins: [esbuild(), preserveShebangs(), terser()],
+    plugins: [esbuild({ target: 'es2025' }), preserveShebangs(), terser()],
   },
 ];

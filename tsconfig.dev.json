@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "lib": ["es2022"],
-    "module": "node20",
+    "lib": ["es2025"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "lib",
     "rootDir": "src",
+    "rewriteRelativeImportExtensions": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es6",
+    "target": "es2025",
     "types": ["node"]
   },
   "include": ["src/**/*.ts"]

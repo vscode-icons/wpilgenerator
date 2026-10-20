@@ -1,7 +1,7 @@
 import type { Arguments, Options } from 'yargs';
 
-import type { Logger } from './logger';
-import type { IParsedArgs } from './types';
+import type { Logger } from './logger.ts';
+import type { IParsedArgs } from './types/index.ts';
 
 import yargs from 'yargs';
 

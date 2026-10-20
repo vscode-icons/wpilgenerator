@@ -1,7 +1,7 @@
-import type { Logger } from './logger';
-import type { IParsedArgs } from './types';
+import type { Logger } from './logger.ts';
+import type { IParsedArgs } from './types/index.ts';
 
-import { findDirectorySync, pathUnixJoin } from './utils';
+import { findDirectorySync, pathUnixJoin } from './utils.ts';
 
 export abstract class GitClient {
   public readonly dirname: string;
