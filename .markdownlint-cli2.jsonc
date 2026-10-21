@@ -3,5 +3,8 @@
     "default": true,
     "MD013": false // Disable the line-length rule
   },
-  "ignores": ["node_modules/**", "lib/**"]
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules/**", "lib/**"],
+  "noBanner": true,
+  "noProgress": true
 }

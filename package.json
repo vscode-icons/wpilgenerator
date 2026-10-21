@@ -32,13 +32,15 @@
     "precompile:dev": "npm run format && npm run lint",
     "compile:dev": "npm run compile -- -p tsconfig.dev.json",
     "precompile": "npm run cleanup",
+    "check": "npm run format && npm run lint && npm run lint:md",
     "compile": "tsc",
     "compile:w": "npm run compile -- -w",
     "format": "prettier --log-level error --write .",
     "lint": "eslint --fix",
+    "lint:md": "markdownlint-cli2 --fix",
     "prebundle": "npm run cleanup",
     "bundle": "rollup -c",
-    "prewpilgen": "npm run format && npm run lint && npm run compile",
+    "prewpilgen": "npm run check && npm run compile",
     "wpilgen": "node ./lib/cli.js"
   },
   "dependencies": {

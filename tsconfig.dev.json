@@ -4,6 +4,7 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "newLine": "lf",
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
