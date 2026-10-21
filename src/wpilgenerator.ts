@@ -79,7 +79,7 @@ export async function main(): Promise<void> {
           gitClient,
           logger,
         ).generate();
-        if (result) {
+        if (result.content) {
           results.push(result);
         }
         break;
@@ -91,7 +91,7 @@ export async function main(): Promise<void> {
           gitClient,
           logger,
         ).generate();
-        if (result) {
+        if (result.content) {
           results.push(result);
         }
         break;
@@ -99,7 +99,7 @@ export async function main(): Promise<void> {
     }
 
     let hasCommit = false;
-    if (results) {
+    if (results.length > 0) {
       await Promise.all(
         results.map(async (result: IResult): Promise<void> => {
           hasCommit ||= await gitClient.tryCommitToWikiRepo(

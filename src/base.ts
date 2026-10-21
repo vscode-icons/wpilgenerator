@@ -39,7 +39,7 @@ export abstract class BaseGenerator {
     const hasChanged = this.compareLists(wikiPageContent, createdList);
 
     if (this.pargs.output === 'repo' && !hasChanged) {
-      return { filename: this.wikiPageFilename, content: wikiPageContent };
+      return { filename: this.wikiPageFilename, content: '' };
     }
 
     const newWikiPage = this.createNewWikiPage(wikiPageContent, createdList);
