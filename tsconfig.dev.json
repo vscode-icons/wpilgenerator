@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "lib": ["es2025"],
     "module": "esnext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
     "newLine": "lf",
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "lib",
-    "rootDir": "src",
     "rewriteRelativeImportExtensions": true,
+    "rootDir": "src",
     "skipLibCheck": true,
     "sourceMap": true,
     "target": "es2025",
