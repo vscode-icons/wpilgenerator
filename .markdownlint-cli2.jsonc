@@ -3,8 +3,5 @@
     "default": true,
     "MD013": false // Disable the line-length rule
   },
-  "ignores": [
-    "node_modules/**",
-    "lib/**"
-  ]
+  "ignores": ["node_modules/**", "lib/**"]
 }

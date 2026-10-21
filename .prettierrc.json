@@ -2,5 +2,13 @@
   "singleQuote": true,
   "trailingComma": "all",
   "proseWrap": "always",
-  "printWidth": 80
+  "printWidth": 80,
+  "overrides": [
+    {
+      "files": "*.jsonc",
+      "options": {
+        "trailingComma": "none"
+      }
+    }
+  ]
 }
